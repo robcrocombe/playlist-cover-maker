@@ -1,0 +1,13 @@
+@use 'variables' as *;
+
+html {
+  background-color: $bg-color;
+  font-family: $font-family;
+  font-size: 16px;
+}
+
+// Chrome blue outline
+textarea:focus,
+input:focus {
+  outline: none;
+}
