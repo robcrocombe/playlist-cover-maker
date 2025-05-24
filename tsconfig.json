@@ -2,7 +2,8 @@
   "include": ["src/**/*"],
   "compileOnSave": false,
   "compilerOptions": {
-    "target": "es2021",
+    "target": "esnext",
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "strictNullChecks": true,
     "verbatimModuleSyntax": true,

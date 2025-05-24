@@ -7,6 +7,18 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>" />
     <link rel="stylesheet" href="/src/index.scss" />
     <title>Playlist Cover Art</title>
+    <script>
+        try {
+          console.info = new Proxy(console.info, {
+            apply: (target, thisArg, args) => {
+              if (args?.[0]?.includes?.('React DevTools')) return;
+              return Reflect.apply(target, thisArg, args);
+            },
+          });
+        } catch (err) {
+          console.error('Failed to patch console.info', err);
+        }
+    </script>
   </head>
   <body>
     <div id="app"></div>
