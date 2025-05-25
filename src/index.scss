@@ -1,6 +1,37 @@
+/* @use 'bulma/sass/base';
+@use 'bulma/sass/themes';
+@use 'bulma/sass/grid';
+@use 'bulma/sass/form';
+@use 'bulma/sass/elements/button';
+@use 'bulma/sass/elements/image'; */
+@use 'bulma/sass';
+
 @forward 'styles/variables';
-@forward 'styles/reset';
 @forward 'styles/utils';
-@forward 'styles/base';
-@forward 'styles/buttons';
 @forward 'styles/app';
+/* @forward 'styles/base'; */
+
+/* Primary #1ed760 */
+/* Link #27ae60 */
+
+:root {
+  --bulma-primary-h: 141deg;
+  --bulma-primary-s: 76%;
+  --bulma-primary-l: 48%;
+  --bulma-link-h: 145deg;
+  --bulma-link-s: 63%;
+  --bulma-link-l: 42%;
+  --bulma-danger-h: 357deg;
+  --bulma-danger-s: 96%;
+  --bulma-danger-l: 64%;
+  // --bulma-text-l: 80%;
+}
+
+.input {
+  --bulma-input-border-l: 40%;
+  --bulma-input-placeholder-color: hsla(221deg, 14%, 93%, 0.5);
+}
+
+.button {
+  --bulma-button-border-l: 40%;
+}
