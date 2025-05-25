@@ -22,10 +22,7 @@ export function SearchPanel(): JSX.Element {
 
     const res = await searchAlbums(searchTerm.trim());
 
-    if (res) {
-      console.log(res);
-      setSearchResults(res);
-    }
+    setSearchResults(res || []);
     setLoading(false);
   }
 
@@ -35,6 +32,10 @@ export function SearchPanel(): JSX.Element {
     }
 
     setAlbums([...albums, album]);
+  }
+
+  function removeAlbum(album: SimplifiedAlbum) {
+    setAlbums(albums.filter(a => a.id !== album.id));
   }
 
   return (
@@ -55,34 +56,47 @@ export function SearchPanel(): JSX.Element {
           </button>
         </div>
       </form>
-      <div className="overflow-auto" style={{ maxHeight: '80vh' }}>
+      <div className="overflow-auto" style={{ maxHeight: '640px' }}>
         <ul className="is-paddingless">
-          {searchResults.map((result, index) => (
-            <li
-              key={index}
-              className="album-search-result columns is-vcentered"
-              style={{ padding: '10px' }}>
-              <div className="column is-narrow">
-                <figure className="image is-64x64">
-                  <img src={result.images[0].url} alt={result.name} />
-                </figure>
-              </div>
-              <div className="column">
-                <p className="title is-5">{result.name}</p>
-                <p className="subtitle is-6">
-                  {result.artists.map(artist => artist.name).join(', ')}
-                </p>
-              </div>
-              <div className="column is-narrow">
-                <button
-                  className="button is-success is-inverted"
-                  disabled={albums.length >= 4 || albums.some(a => a.id === result.id)}
-                  onClick={() => addAlbum(result)}>
-                  Add Album
-                </button>
-              </div>
-            </li>
-          ))}
+          {searchResults.map((result, index) => {
+            const isSelected = albums.some(a => a.id === result.id);
+            const disabled = albums.length >= 4;
+
+            return (
+              <li
+                key={index}
+                className="album-search-result columns is-vcentered"
+                style={{ padding: '10px' }}>
+                <div className="column is-narrow">
+                  <figure className="image is-64x64">
+                    <img src={result.images[0].url} alt={result.name} />
+                  </figure>
+                </div>
+                <div className="column">
+                  <p className="title is-5">{result.name}</p>
+                  <p className="subtitle is-6">
+                    {result.artists.map(artist => artist.name).join(', ')}
+                  </p>
+                </div>
+                <div className="column is-narrow">
+                  {isSelected && (
+                    <button type="button" className="button" onClick={() => removeAlbum(result)}>
+                      Remove
+                    </button>
+                  )}
+                  {!isSelected && (
+                    <button
+                      type="button"
+                      className={cx('button', { 'is-outlined is-inverted is-primary': !disabled })}
+                      disabled={disabled}
+                      onClick={() => addAlbum(result)}>
+                      Add Album
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

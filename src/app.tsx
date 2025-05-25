@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DesignPanel } from './DesignPanel';
 import { SearchPanel } from './SearchPanel';
 import { getToken } from './spotify';
 
@@ -23,12 +24,13 @@ export function App(): JSX.Element {
   }
 
   return (
-    <div className="columns m2">
+    <div className="columns p3">
       <div className="column">
         <SearchPanel />
       </div>
-      <div className="divider" />
-      <div className="column">Second column</div>
+      <div className="column design-panel">
+        <DesignPanel />
+      </div>
     </div>
   );
 }

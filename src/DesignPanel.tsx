@@ -1,0 +1,90 @@
+import { useEffect, useRef, useState } from 'react';
+import { useAppStore } from './AppStore';
+
+export function DesignPanel(): JSX.Element {
+  const { albums } = useAppStore();
+  const [order, setOrder] = useState('1, 2, 3, 4');
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    // Sort albums
+    const sanitisedOrder = order.trim() ? order.trim() : '1, 2, 3, 4';
+    const orderArray = sanitisedOrder
+      .split(',')
+      .map(num => parseInt(num.trim(), 10) - 1) // Convert to zero-based index
+      .filter(num => num >= 0 && num < albums.length); // Filter valid indices
+
+    // Ensure we have exactly 4 albums, filling with undefined if necessary
+    const orderedAlbums = Array.from({ length: 4 }, (_, i) => albums[orderArray[i]]);
+
+    if (context) {
+      const size = canvas.width / 2;
+
+      for (let i = 0; i < 4; ++i) {
+        const album = orderedAlbums[i];
+
+        // Draw album cover in a 2x2 grid
+        if (album) {
+          const x = (i % 2) * size;
+          const y = Math.floor(i / 2) * size;
+          const image = new Image();
+          image.src = album.images[0]?.url || '';
+          image.setAttribute('crossorigin', 'anonymous');
+          image.onload = () => {
+            if (context) {
+              context.drawImage(image, x, y, size, size);
+            }
+          };
+        } else {
+          // Fill remaining slots with a placeholder
+          const x = (i % 2) * size;
+          const y = Math.floor(i / 2) * size;
+          context.fillStyle = '#000'; // Placeholder color
+          context.fillRect(x, y, size, size);
+        }
+      }
+    }
+  }, [albums, order]);
+
+  function downloadCover() {
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    const link = document.createElement('a');
+    link.download = 'playlist-cover.jpg';
+    link.href = canvas.toDataURL('image/jpeg', 1);
+    link.click();
+    link.remove();
+  }
+
+  return (
+    <div className="m2" style={{ width: '640px' }}>
+      <canvas ref={canvasRef} width="1280" height="1280" className="canvas" />
+      <div className="flex flex-center gap-2 mt1">
+        <button
+          type="button"
+          className="button is-primary is-outlined"
+          disabled={albums.length < 4}
+          onClick={downloadCover}>
+          Download Playlist Cover
+        </button>
+        <input
+          className="input"
+          type="text"
+          placeholder="Album order (1, 2, 3, 4)"
+          value={order}
+          onChange={e => setOrder(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+}

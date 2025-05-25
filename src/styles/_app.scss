@@ -1,14 +1,17 @@
-.divider {
-  width: 1px;
-  height: 90vh;
-  background-color: rgba(#fff, 0.2);
-  margin: 20px 0;
+.design-panel {
+  border-left: 1px solid hsl(221, 14%, 40%);
+}
+
+.canvas {
+  background: #000;
+  width: 640px;
+  height: 640px;
 }
 
 .album-search-result {
-  transition: 0.1s background-color ease-out;
+  transition: 0.15s background-color ease-out;
 
   &:hover {
-    background-color: rgba(#fff, 0.05);
+    background-color: rgba(0, 120, 220, 0.075);
   }
 }
