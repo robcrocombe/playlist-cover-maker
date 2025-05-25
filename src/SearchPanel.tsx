@@ -1,14 +1,15 @@
 import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import cx from 'classnames';
 import { useState, type FormEvent } from 'react';
+import { useAppStore } from './AppStore';
 import { searchAlbums } from './spotify';
 
-interface SearchPanelProps {}
-
-export function SearchPanel({}: SearchPanelProps): JSX.Element {
+export function SearchPanel(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<SimplifiedAlbum[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const { albums, setAlbums } = useAppStore();
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,6 +27,14 @@ export function SearchPanel({}: SearchPanelProps): JSX.Element {
       setSearchResults(res);
     }
     setLoading(false);
+  }
+
+  function addAlbum(album: SimplifiedAlbum) {
+    if (albums.length >= 4 || albums.some(a => a.id === album.id)) {
+      return;
+    }
+
+    setAlbums([...albums, album]);
   }
 
   return (
@@ -65,7 +74,12 @@ export function SearchPanel({}: SearchPanelProps): JSX.Element {
                 </p>
               </div>
               <div className="column is-narrow">
-                <button className="button is-success is-inverted">Add Album</button>
+                <button
+                  className="button is-success is-inverted"
+                  disabled={albums.length >= 4 || albums.some(a => a.id === result.id)}
+                  onClick={() => addAlbum(result)}>
+                  Add Album
+                </button>
               </div>
             </li>
           ))}
