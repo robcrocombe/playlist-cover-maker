@@ -3,7 +3,7 @@ import { useAppStore } from './AppStore';
 
 export function DesignPanel(): JSX.Element {
   const { albums } = useAppStore();
-  const [order, setOrder] = useState('1, 2, 3, 4');
+  const [order, setOrder] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,10 +15,10 @@ export function DesignPanel(): JSX.Element {
     const context = canvas.getContext('2d');
 
     // Sort albums
-    const sanitisedOrder = order.trim() ? order.trim() : '1, 2, 3, 4';
+    const sanitisedOrder = order.trim() ? order.trim() : '1 2 3 4';
     const orderArray = sanitisedOrder
-      .split(',')
-      .map(num => parseInt(num.trim(), 10) - 1) // Convert to zero-based index
+      .split(/\s+/)
+      .map(num => parseInt(num, 10) - 1) // Convert to zero-based index
       .filter(num => num >= 0 && num < albums.length); // Filter valid indices
 
     // Ensure we have exactly 4 albums, filling with undefined if necessary
@@ -67,9 +67,9 @@ export function DesignPanel(): JSX.Element {
   }
 
   return (
-    <div className="m2" style={{ width: '640px' }}>
+    <div className="flex flex-center flex-column">
       <canvas ref={canvasRef} width="1280" height="1280" className="canvas" />
-      <div className="flex flex-center gap-2 mt1">
+      <div className="flex flex-center gap-2 mt-4 fill-width" style={{ maxWidth: '640px' }}>
         <button
           type="button"
           className="button is-primary is-outlined"
@@ -80,7 +80,7 @@ export function DesignPanel(): JSX.Element {
         <input
           className="input"
           type="text"
-          placeholder="Album order (1, 2, 3, 4)"
+          placeholder="Album order (1 2 3 4)"
           value={order}
           onChange={e => setOrder(e.target.value)}
         />

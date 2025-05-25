@@ -15,7 +15,7 @@ export function App(): JSX.Element {
 
   if (!authorised) {
     return (
-      <div className="m3">
+      <div className="m-3">
         <button type="button" className="button is-primary" onClick={getToken}>
           Auth with Spotify
         </button>
@@ -24,11 +24,11 @@ export function App(): JSX.Element {
   }
 
   return (
-    <div className="columns p3">
-      <div className="column">
+    <div className="columns is-6 m-3">
+      <div className="column is-half">
         <SearchPanel />
       </div>
-      <div className="column design-panel">
+      <div className="column is-half design-panel">
         <DesignPanel />
       </div>
     </div>

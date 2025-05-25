@@ -5,11 +5,11 @@
 @use 'bulma/sass/elements/button';
 @use 'bulma/sass/elements/image'; */
 @use 'bulma/sass';
+@use 'bulma-list/sass/bulma-list';
 
 @forward 'styles/variables';
 @forward 'styles/utils';
 @forward 'styles/app';
-/* @forward 'styles/base'; */
 
 /* Primary #1ed760 */
 /* Primary New #1db954 */
@@ -25,6 +25,7 @@
   --bulma-danger-h: 357deg;
   --bulma-danger-s: 96%;
   --bulma-danger-l: 64%;
+  --bulma-scheme-main-bis-l: 14%;
   // --bulma-text-l: 80%;
 }
 

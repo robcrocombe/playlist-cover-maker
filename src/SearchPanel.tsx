@@ -39,9 +39,9 @@ export function SearchPanel(): JSX.Element {
   }
 
   return (
-    <div>
-      <form className="field has-addons" onSubmit={submit}>
-        <div className="control" style={{ width: '80%' }}>
+    <div className="fill-width">
+      <form className="field has-addons fill-width px-2" onSubmit={submit}>
+        <div className="control fill-width">
           <input
             className="input fill-width"
             type="text"
@@ -56,46 +56,84 @@ export function SearchPanel(): JSX.Element {
           </button>
         </div>
       </form>
-      <div className="overflow-auto" style={{ maxHeight: '640px' }}>
-        <ul className="is-paddingless">
+      <div className="results-list">
+        <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
           {searchResults.map((result, index) => {
             const isSelected = albums.some(a => a.id === result.id);
             const disabled = albums.length >= 4;
 
             return (
-              <li
-                key={index}
-                className="album-search-result columns is-vcentered"
-                style={{ padding: '10px' }}>
-                <div className="column is-narrow">
+              <div className="list-item" key={result.id || index}>
+                <div className="list-item-image">
                   <figure className="image is-64x64">
                     <img src={result.images[0].url} alt={result.name} />
                   </figure>
                 </div>
-                <div className="column">
-                  <p className="title is-5">{result.name}</p>
-                  <p className="subtitle is-6">
+
+                <div className="list-item-content">
+                  <div className="list-item-title">{result.name}</div>
+                  <div className="list-item-description">
                     {result.artists.map(artist => artist.name).join(', ')}
-                  </p>
+                  </div>
                 </div>
-                <div className="column is-narrow">
-                  {isSelected && (
-                    <button type="button" className="button" onClick={() => removeAlbum(result)}>
-                      Remove
-                    </button>
-                  )}
-                  {!isSelected && (
-                    <button
-                      type="button"
-                      className={cx('button', { 'is-outlined is-inverted is-primary': !disabled })}
-                      disabled={disabled}
-                      onClick={() => addAlbum(result)}>
-                      Add Album
-                    </button>
-                  )}
+
+                <div className="list-item-controls">
+                  <div className="buttons is-right">
+                    {isSelected && (
+                      <button type="button" className="button" onClick={() => removeAlbum(result)}>
+                        Remove
+                      </button>
+                    )}
+                    {!isSelected && (
+                      <button
+                        type="button"
+                        className={cx('button', {
+                          'is-outlined is-inverted is-primary': !disabled,
+                        })}
+                        disabled={disabled}
+                        onClick={() => addAlbum(result)}>
+                        Add Album
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </li>
+              </div>
             );
+
+            // return (
+            //   <li
+            //     key={index}
+            //     className="album-search-result columns is-vcentered"
+            //     style={{ padding: '10px' }}>
+            //     <div className="column is-narrow">
+            //       <figure className="image is-64x64">
+            //         <img src={result.images[0].url} alt={result.name} />
+            //       </figure>
+            //     </div>
+            //     <div className="column">
+            //       <p className="title is-5">{result.name}</p>
+            //       <p className="subtitle is-6">
+            //         {result.artists.map(artist => artist.name).join(', ')}
+            //       </p>
+            //     </div>
+            //     <div className="column is-narrow">
+            //       {isSelected && (
+            //         <button type="button" className="button" onClick={() => removeAlbum(result)}>
+            //           Remove
+            //         </button>
+            //       )}
+            //       {!isSelected && (
+            //         <button
+            //           type="button"
+            //           className={cx('button', { 'is-outlined is-inverted is-primary': !disabled })}
+            //           disabled={disabled}
+            //           onClick={() => addAlbum(result)}>
+            //           Add Album
+            //         </button>
+            //       )}
+            //     </div>
+            //   </li>
+            // );
           })}
         </ul>
       </div>
