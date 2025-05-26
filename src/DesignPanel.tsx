@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppStore } from './AppStore';
 import { SelectedAlbumList } from './SelectedAlbumList';
 
 export function DesignPanel(): JSX.Element {
-  const { albums } = useAppStore();
-  const [order, setOrder] = useState('');
+  const { albums, setAlbums } = useAppStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // TODO: add reset button
   // TODO: responsive download/order section
+  // TODO: add PNG/JPG download options
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -18,24 +18,12 @@ export function DesignPanel(): JSX.Element {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
 
-    // Sort albums
-    const sanitisedOrder = order.trim() ? order.trim() : '1 2 3 4';
-    const orderArray = sanitisedOrder
-      .split(/\s+/)
-      .map(num => parseInt(num, 10) - 1) // Convert to zero-based index
-      .filter(num => num >= 0 && num < albums.length); // Filter valid indices
-
-    // Ensure we have exactly 4 albums, filling with undefined if necessary
-    const orderedAlbums = Array.from({ length: 4 }, (_, i) => albums[orderArray[i]]);
-
     if (context) {
       const size = canvas.width / 2;
-      // const bgColors = ['#212922', '#294936', '#3e6259', '#5b8266'];
-      // const bgColors = ['#212922', '#294936', '#3e6259', '#587e63'];
       const bgColors = ['#17191C', '#202428', '#343a40', '#41474E'];
 
       for (let i = 0; i < 4; ++i) {
-        const album = orderedAlbums[i];
+        const album = albums[i];
 
         // Draw album cover in a 2x2 grid
         if (album) {
@@ -74,7 +62,7 @@ export function DesignPanel(): JSX.Element {
         }
       }
     }
-  }, [albums, order]);
+  }, [albums]);
 
   function downloadCover() {
     if (!canvasRef.current) {
@@ -100,13 +88,13 @@ export function DesignPanel(): JSX.Element {
           onClick={downloadCover}>
           Download Playlist Cover
         </button>
-        <input
-          className="input"
-          type="text"
-          placeholder="Album order (1 2 3 4)"
-          value={order}
-          onChange={e => setOrder(e.target.value)}
-        />
+        <button
+          type="button"
+          className="button"
+          disabled={!albums.length}
+          onClick={() => setAlbums([])}>
+          Reset
+        </button>
       </div>
       <SelectedAlbumList />
     </div>
