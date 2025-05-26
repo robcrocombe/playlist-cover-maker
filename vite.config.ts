@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import { defineConfig, type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
+import csp from 'vite-plugin-csp-guard';
 
 export default defineConfig({
   server: {
@@ -16,6 +17,17 @@ export default defineConfig({
     react(),
     checker({
       typescript: true,
+    }),
+    csp({
+      dev: { run: true, outlierSupport: ['less'] },
+      policy: {
+        'style-src-elem': ["'self'", "'unsafe-inline'"],
+        'img-src': ["'self'", 'data:', 'https:'],
+        'connect-src': ["'self'", 'https://accounts.spotify.com', 'https://api.spotify.com'],
+      },
+      build: {
+        sri: true,
+      },
     }),
     clearTerminal(),
   ],

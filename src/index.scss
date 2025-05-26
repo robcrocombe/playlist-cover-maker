@@ -8,6 +8,7 @@
 @use 'bulma/sass/elements/button';
 @use 'bulma/sass/elements/image';
 @use 'bulma/sass/elements/title';
+@use 'bulma/sass/utilities/mixins';
 
 /* @use 'bulma/sass'; */
 @use 'bulma-list/sass/bulma-list';
@@ -21,7 +22,8 @@
 /* Link #27ae60 */
 
 :root {
-  --bulma-body-size: 14px;
+  color-scheme: dark;
+  --bulma-body-size: 15px;
   --bulma-primary-h: 141deg;
   --bulma-primary-s: 73%;
   --bulma-primary-l: 42%;
@@ -33,6 +35,12 @@
   --bulma-danger-l: 64%;
   --bulma-scheme-main-bis-l: 14%;
   // --bulma-text-l: 80%;
+}
+
+@include mixins.mobile {
+  :root {
+    --bulma-body-size: 16px;
+  }
 }
 
 .input {
