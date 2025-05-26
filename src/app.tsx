@@ -1,36 +1,26 @@
-import { useMemo } from 'react';
+import { useAppStore } from './AppStore';
+import { Auth } from './Auth';
 import { DesignPanel } from './DesignPanel';
 import { SearchPanel } from './SearchPanel';
-import { getToken } from './spotify';
+import { SpotifyStoreProvider } from './SpotifyStore';
 
 export function App(): JSX.Element {
-  const authorised = useMemo(() => {
-    const token = localStorage.getItem('token');
-    const expires = localStorage.getItem('expires');
-    if (!token || !expires || Date.now() > parseInt(expires, 10)) {
-      return false;
-    }
-    return true;
-  }, []);
+  const { token } = useAppStore();
 
-  if (!authorised) {
-    return (
-      <div className="m-3">
-        <button type="button" className="button is-primary" onClick={getToken}>
-          Auth with Spotify
-        </button>
-      </div>
-    );
+  if (!token) {
+    return <Auth />;
   }
 
   return (
-    <div className="columns is-6 m-3">
-      <div className="column is-half">
-        <SearchPanel />
+    <SpotifyStoreProvider token={token}>
+      <div className="columns is-6 m-3">
+        <div className="column is-half">
+          <SearchPanel />
+        </div>
+        <div className="column is-half design-panel">
+          <DesignPanel />
+        </div>
       </div>
-      <div className="column is-half design-panel">
-        <DesignPanel />
-      </div>
-    </div>
+    </SpotifyStoreProvider>
   );
 }

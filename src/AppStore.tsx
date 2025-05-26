@@ -4,14 +4,26 @@ import { createContext, useContext, useState, type PropsWithChildren } from 'rea
 interface AppStoreData {
   albums: SimplifiedAlbum[];
   setAlbums: SetState<SimplifiedAlbum[]>;
+  token: string | undefined;
+  setToken: SetState<string | undefined>;
 }
 
 function AppStore(): AppStoreData {
   const [albums, setAlbums] = useState<SimplifiedAlbum[]>([]);
+  const [token, setToken] = useState(() => {
+    const token = localStorage.getItem('token');
+    const expires = localStorage.getItem('expires');
+    if (!token || !expires || Date.now() > parseInt(expires, 10)) {
+      return;
+    }
+    return token;
+  });
 
   return {
     albums,
     setAlbums,
+    token,
+    setToken,
   };
 }
 

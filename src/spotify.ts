@@ -1,33 +1,14 @@
 import { type SearchResults, type SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import axios from 'axios';
 
-declare global {
-  interface Window {
-    setClient: (clientId: string, secret: string) => void;
-  }
-}
-
-window.setClient = (clientId: string, secret: string) => {
-  localStorage.setItem('clientId', clientId);
-  localStorage.setItem('clientSecret', secret);
-};
-
-export async function getToken() {
-  const clientId = localStorage.getItem('clientId');
-  const clientSecret = localStorage.getItem('clientSecret');
-  const expires = localStorage.getItem('expires');
-
-  if (!clientId || !clientSecret) {
-    console.error('Client ID and Secret are required');
-    return;
-  }
-
-  if (expires && Date.now() < parseInt(expires, 10)) {
-    console.log('Token is still valid, skipping request');
-    return;
-  }
-
+export async function fetchToken(
+  clientId: string,
+  clientSecret: string
+): Promise<string | undefined> {
   try {
+    localStorage.setItem('clientId', clientId);
+    localStorage.setItem('clientSecret', clientSecret);
+
     const res = await axios.post(
       'https://accounts.spotify.com/api/token',
       {},
@@ -47,14 +28,13 @@ export async function getToken() {
     localStorage.setItem('token', res.data.access_token);
     localStorage.setItem('expires', expirationTime.toString());
 
-    location.reload();
+    return res.data.access_token;
   } catch (err) {
     console.error(err);
   }
 }
 
-export async function searchAlbums(q: string): Promise<SimplifiedAlbum[] | undefined> {
-  const token = localStorage.getItem('token');
+export async function fetchAlbums(token, query: string): Promise<SimplifiedAlbum[] | undefined> {
   if (!token) {
     console.error('No token found');
     return;
@@ -65,7 +45,7 @@ export async function searchAlbums(q: string): Promise<SimplifiedAlbum[] | undef
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: { q, type: 'album' },
+      params: { q: query, type: 'album' },
     });
 
     return res.data.albums.items;

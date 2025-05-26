@@ -2,7 +2,7 @@ import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import cx from 'classnames';
 import { useState, type FormEvent } from 'react';
 import { useAppStore } from './AppStore';
-import { searchAlbums } from './spotify';
+import { useSpotifyStore } from './SpotifyStore';
 
 export function SearchPanel(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +10,7 @@ export function SearchPanel(): JSX.Element {
   const [loading, setLoading] = useState(false);
 
   const { albums, setAlbums } = useAppStore();
+  const { searchAlbums } = useSpotifyStore();
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -88,7 +89,7 @@ export function SearchPanel(): JSX.Element {
                       <button
                         type="button"
                         className={cx('button', {
-                          'is-outlined is-inverted is-primary': !disabled,
+                          'is-outlined is-link': !disabled,
                         })}
                         disabled={disabled}
                         onClick={() => addAlbum(result)}>
@@ -99,41 +100,6 @@ export function SearchPanel(): JSX.Element {
                 </div>
               </div>
             );
-
-            // return (
-            //   <li
-            //     key={index}
-            //     className="album-search-result columns is-vcentered"
-            //     style={{ padding: '10px' }}>
-            //     <div className="column is-narrow">
-            //       <figure className="image is-64x64">
-            //         <img src={result.images[0].url} alt={result.name} />
-            //       </figure>
-            //     </div>
-            //     <div className="column">
-            //       <p className="title is-5">{result.name}</p>
-            //       <p className="subtitle is-6">
-            //         {result.artists.map(artist => artist.name).join(', ')}
-            //       </p>
-            //     </div>
-            //     <div className="column is-narrow">
-            //       {isSelected && (
-            //         <button type="button" className="button" onClick={() => removeAlbum(result)}>
-            //           Remove
-            //         </button>
-            //       )}
-            //       {!isSelected && (
-            //         <button
-            //           type="button"
-            //           className={cx('button', { 'is-outlined is-inverted is-primary': !disabled })}
-            //           disabled={disabled}
-            //           onClick={() => addAlbum(result)}>
-            //           Add Album
-            //         </button>
-            //       )}
-            //     </div>
-            //   </li>
-            // );
           })}
         </ul>
       </div>

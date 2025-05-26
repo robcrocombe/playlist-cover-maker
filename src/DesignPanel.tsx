@@ -6,6 +6,9 @@ export function DesignPanel(): JSX.Element {
   const [order, setOrder] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // TODO: add reset button
+  // TODO: responsive download/order section
+
   useEffect(() => {
     if (!canvasRef.current) {
       return;
@@ -36,10 +39,26 @@ export function DesignPanel(): JSX.Element {
           const y = Math.floor(i / 2) * size;
           const image = new Image();
           image.src = album.images[0]?.url || '';
+
+          // Set crossorigin attribute to handle CORS issues with images
           image.setAttribute('crossorigin', 'anonymous');
+
           image.onload = () => {
             if (context) {
-              context.drawImage(image, x, y, size, size);
+              // Cut off 1px border from the image to avoid edge artifacts
+              const borderSize = 1;
+
+              context.drawImage(
+                image,
+                borderSize,
+                borderSize,
+                image.width - 2 * borderSize,
+                image.height - 2 * borderSize,
+                x,
+                y,
+                size,
+                size
+              );
             }
           };
         } else {
