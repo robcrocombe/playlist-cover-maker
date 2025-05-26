@@ -3,10 +3,9 @@ import { useAppStore } from './AppStore';
 import { SelectedAlbumList } from './SelectedAlbumList';
 
 export function DesignPanel(): JSX.Element {
-  const { albums, setAlbums } = useAppStore();
+  const { albums, setAlbums, endSession } = useAppStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // TODO: add reset button
   // TODO: responsive download/order section
   // TODO: add PNG/JPG download options
 
@@ -95,8 +94,16 @@ export function DesignPanel(): JSX.Element {
           onClick={() => setAlbums([])}>
           Reset
         </button>
+        <button type="button" className="button ml-auto" onClick={endSession}>
+          Sign out
+        </button>
       </div>
       <SelectedAlbumList />
+      {albums.length > 1 && (
+        <p className="mt-2">
+          Drag and drop with <span className="drag-hint">⋮</span> to reorder.
+        </p>
+      )}
     </div>
   );
 }

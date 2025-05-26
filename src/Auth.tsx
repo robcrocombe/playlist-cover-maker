@@ -12,7 +12,7 @@ export function Auth(): JSX.Element {
   });
   const [loading, setLoading] = useState(false);
 
-  const { setToken } = useAppStore();
+  const { startSession } = useAppStore();
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,9 +24,11 @@ export function Auth(): JSX.Element {
     setLoading(true);
 
     try {
-      const token = await fetchToken(clientId, clientSecret);
-      if (token) {
-        setToken(token);
+      const res = await fetchToken(clientId, clientSecret);
+
+      if (res?.access_token && res.expires_in) {
+        const expirationTime = Date.now() + res.expires_in * 1000;
+        startSession(res.access_token, expirationTime);
       }
     } catch (err) {
       console.log(err);
@@ -73,9 +75,9 @@ export function Auth(): JSX.Element {
         Auth with Spotify
       </button>
       <p className="mt-3">
-        You can get your Client ID and Client Secret from the{' '}
+        Get your client ID and client secret from the{' '}
         <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noreferrer">
-          Spotify developer dashboard
+          Spotify Developer dashboard
         </a>
         .
       </p>

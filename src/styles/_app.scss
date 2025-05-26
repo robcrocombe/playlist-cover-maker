@@ -34,6 +34,27 @@
   background-color: var(--bulma-body-background-color);
 }
 
+.drag-handle {
+  cursor: move;
+  user-select: none;
+  font-weight: 900;
+}
+
+.drag-hint {
+  border: 1px solid var(--bulma-border);
+  border-radius: 3px;
+  font-weight: 500;
+  padding: 0 5px 1px 5px;
+}
+
+/* .footer {
+  --bulma-footer-padding: 3rem 1.5rem;
+
+  & button:hover {
+    text-decoration: underline;
+  }
+} */
+
 p a:hover {
   text-decoration: underline;
 }

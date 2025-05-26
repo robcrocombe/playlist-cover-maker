@@ -1,14 +1,22 @@
 import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import { createContext, useCallback, useContext, type PropsWithChildren } from 'react';
+import { useAppStore } from './AppStore';
 import { fetchAlbums } from './spotify';
 
 interface SpotifyStore {
   searchAlbums: (query: string) => Promise<SimplifiedAlbum[] | undefined>;
 }
 
-function SpotifyStore(token: string): SpotifyStore {
+function SpotifyStore(): SpotifyStore {
+  const { token, expires, endSession } = useAppStore();
+
   const searchAlbums = useCallback(
-    (query: string): Promise<SimplifiedAlbum[] | undefined> => {
+    async (query: string): Promise<SimplifiedAlbum[] | undefined> => {
+      if (!token || !expires || Date.now() > expires) {
+        endSession();
+        return;
+      }
+
       return fetchAlbums(token, query);
     },
     [token]
@@ -27,14 +35,7 @@ export function useSpotifyStore(): SpotifyStore {
   return store;
 }
 
-interface SpotifyStoreProviderProps {
-  token: string;
-}
-
-export function SpotifyStoreProvider({
-  token,
-  children,
-}: PropsWithChildren<SpotifyStoreProviderProps>): JSX.Element {
-  const store = SpotifyStore(token);
+export function SpotifyStoreProvider({ children }: PropsWithChildren): JSX.Element {
+  const store = SpotifyStore();
   return <SpotifyStoreContext.Provider value={store}>{children}</SpotifyStoreContext.Provider>;
 }

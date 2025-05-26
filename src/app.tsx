@@ -12,7 +12,7 @@ export function App(): JSX.Element {
   }
 
   return (
-    <SpotifyStoreProvider token={token}>
+    <SpotifyStoreProvider>
       <div className="columns is-6 m-3">
         <div className="column is-half">
           <SearchPanel />

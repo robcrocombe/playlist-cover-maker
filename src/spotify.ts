@@ -1,10 +1,14 @@
-import { type SearchResults, type SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import {
+  type AccessToken,
+  type SearchResults,
+  type SimplifiedAlbum,
+} from '@spotify/web-api-ts-sdk';
 import axios from 'axios';
 
 export async function fetchToken(
   clientId: string,
   clientSecret: string
-): Promise<string | undefined> {
+): Promise<AccessToken | undefined> {
   try {
     localStorage.setItem('clientId', clientId);
     localStorage.setItem('clientSecret', clientSecret);
@@ -22,13 +26,7 @@ export async function fetchToken(
         },
       }
     );
-
-    const expirationTime = Date.now() + res.data.expires_in * 1000;
-
-    localStorage.setItem('token', res.data.access_token);
-    localStorage.setItem('expires', expirationTime.toString());
-
-    return res.data.access_token;
+    return res.data;
   } catch (err) {
     console.error(err);
   }

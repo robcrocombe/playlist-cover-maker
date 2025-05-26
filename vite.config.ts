@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     port: 9000,
     strictPort: true,
+    hmr: { overlay: false },
   },
   preview: {
     port: 9000,
@@ -21,9 +22,10 @@ export default defineConfig({
     csp({
       dev: { run: true, outlierSupport: ['less'] },
       policy: {
-        'style-src-elem': ["'self'", "'unsafe-inline'"],
+        'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         'img-src': ["'self'", 'data:', 'https:'],
         'connect-src': ["'self'", 'https://accounts.spotify.com', 'https://api.spotify.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
       },
       build: {
         sri: true,

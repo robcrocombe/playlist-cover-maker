@@ -15,7 +15,7 @@ export function SelectedAlbumList(): JSX.Element {
         {albums.map(album => {
           return (
             <li className="list-item bg-default" key={album.id}>
-              <div className="list-item-image drag-handle">
+              <div className="list-item-image">
                 <figure className="image is-64x64">
                   <img src={album.images[0].url} alt={album.name} />
                 </figure>
@@ -24,6 +24,19 @@ export function SelectedAlbumList(): JSX.Element {
                 <div className="list-item-title">{album.name}</div>
                 <div className="list-item-description">
                   {album.artists.map(artist => artist.name).join(', ')}
+                </div>
+              </div>
+              <div className="list-item-controls">
+                <div className="buttons is-right">
+                  <button className="button is-small drag-handle" title="Drag to reorder">
+                    <span className="icon">⋮</span>
+                  </button>
+                  <button
+                    className="button is-small"
+                    title="Remove album"
+                    onClick={() => setAlbums(albums.filter(a => a.id !== album.id))}>
+                    Remove
+                  </button>
                 </div>
               </div>
             </li>
