@@ -1,9 +1,30 @@
 @use 'bulma/sass/utilities/mixins';
 
+.main-container {
+  padding: 0.25rem;
+
+  & > .columns {
+    margin: 0 !important;
+  }
+}
+
 .results-list {
   overflow-y: auto;
   max-height: 640px;
-  padding: 0 16px;
+}
+
+@include mixins.desktop {
+  .main-container {
+    padding: 1.25rem;
+  }
+
+  .results-list {
+    padding: 0 16px;
+  }
+
+  .sign-out {
+    margin-left: auto;
+  }
 }
 
 @include mixins.tablet {
@@ -45,6 +66,7 @@
   border-radius: 3px;
   font-weight: 500;
   padding: 0 5px 1px 5px;
+  user-select: none;
 }
 
 /* .footer {

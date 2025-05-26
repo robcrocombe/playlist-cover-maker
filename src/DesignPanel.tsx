@@ -1,13 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { AlbumList } from './AlbumList';
 import { useAppStore } from './AppStore';
-import { SelectedAlbumList } from './SelectedAlbumList';
 
 export function DesignPanel(): JSX.Element {
   const { albums, setAlbums, endSession } = useAppStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // TODO: responsive download/order section
-  // TODO: add PNG/JPG download options
+  const dlCount = useRef(1);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -70,7 +68,8 @@ export function DesignPanel(): JSX.Element {
 
     const canvas = canvasRef.current;
     const link = document.createElement('a');
-    link.download = 'playlist-cover.jpg';
+    link.download = `playlist-cover-${dlCount.current}.jpg`;
+    dlCount.current += 1;
     link.href = canvas.toDataURL('image/jpeg', 1);
     link.click();
     link.remove();
@@ -79,7 +78,9 @@ export function DesignPanel(): JSX.Element {
   return (
     <div className="flex flex-center flex-column">
       <canvas ref={canvasRef} width="1280" height="1280" className="canvas" />
-      <div className="flex flex-center gap-2 mt-4 fill-width" style={{ maxWidth: '640px' }}>
+      <div
+        className="flex flex-center flex-wrap gap-1h mt-4 fill-width"
+        style={{ maxWidth: '640px' }}>
         <button
           type="button"
           className="button is-primary is-outlined"
@@ -94,13 +95,13 @@ export function DesignPanel(): JSX.Element {
           onClick={() => setAlbums([])}>
           Reset
         </button>
-        <button type="button" className="button ml-auto" onClick={endSession}>
+        <button type="button" className="button sign-out" onClick={endSession}>
           Sign out
         </button>
       </div>
-      <SelectedAlbumList />
+      <AlbumList />
       {albums.length > 1 && (
-        <p className="mt-2">
+        <p className="m-2">
           Drag and drop with <span className="drag-hint">⋮</span> to reorder.
         </p>
       )}

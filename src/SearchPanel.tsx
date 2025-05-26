@@ -41,7 +41,7 @@ export function SearchPanel(): JSX.Element {
 
   return (
     <div className="fill-width">
-      <form className="field has-addons fill-width px-2" onSubmit={submit}>
+      <form className="field has-addons fill-width" onSubmit={submit}>
         <div className="control fill-width">
           <input
             className="input fill-width"

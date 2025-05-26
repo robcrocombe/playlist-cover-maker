@@ -13,14 +13,16 @@ export function App(): JSX.Element {
 
   return (
     <SpotifyStoreProvider>
-      <div className="columns is-6 m-3">
-        <div className="column is-half">
-          <SearchPanel />
+      <main className="main-container">
+        <div className="columns is-6 is-marginless">
+          <div className="column is-half">
+            <SearchPanel />
+          </div>
+          <div className="column is-half design-panel">
+            <DesignPanel />
+          </div>
         </div>
-        <div className="column is-half design-panel">
-          <DesignPanel />
-        </div>
-      </div>
+      </main>
     </SpotifyStoreProvider>
   );
 }

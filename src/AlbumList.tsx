@@ -1,11 +1,13 @@
 import { ReactSortable } from 'react-sortablejs';
 import { useAppStore } from './AppStore';
 
-export function SelectedAlbumList(): JSX.Element {
+export function AlbumList(): JSX.Element {
   const { albums, setAlbums } = useAppStore();
 
   return (
-    <ul className="list has-overflow-ellipsis has-visible-pointer-controls">
+    <ul
+      className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls fill-width mt-3 mb-1"
+      style={{ maxWidth: '640px' }}>
       <ReactSortable
         list={albums}
         setList={setAlbums}
