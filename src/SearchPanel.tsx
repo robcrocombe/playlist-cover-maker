@@ -59,12 +59,12 @@ export function SearchPanel(): JSX.Element {
       </form>
       <div className="results-list">
         <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
-          {searchResults.map((result, index) => {
+          {searchResults.map(result => {
             const isSelected = albums.some(a => a.id === result.id);
             const disabled = albums.length >= 4;
 
             return (
-              <div className="list-item" key={result.id || index}>
+              <li className="list-item" key={result.id}>
                 <div className="list-item-image">
                   <figure className="image is-64x64">
                     <img src={result.images[0].url} alt={result.name} />
@@ -98,7 +98,7 @@ export function SearchPanel(): JSX.Element {
                     )}
                   </div>
                 </div>
-              </div>
+              </li>
             );
           })}
         </ul>

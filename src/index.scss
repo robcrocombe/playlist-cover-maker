@@ -1,10 +1,15 @@
-/* @use 'bulma/sass/base';
+@use 'bulma/sass/utilities';
+@use 'bulma/sass/base';
 @use 'bulma/sass/themes';
 @use 'bulma/sass/grid';
+@use 'bulma/sass/layout';
 @use 'bulma/sass/form';
+@use 'bulma/sass/helpers';
 @use 'bulma/sass/elements/button';
-@use 'bulma/sass/elements/image'; */
-@use 'bulma/sass';
+@use 'bulma/sass/elements/image';
+@use 'bulma/sass/elements/title';
+
+/* @use 'bulma/sass'; */
 @use 'bulma-list/sass/bulma-list';
 
 @forward 'styles/variables';
@@ -16,6 +21,7 @@
 /* Link #27ae60 */
 
 :root {
+  --bulma-body-size: 14px;
   --bulma-primary-h: 141deg;
   --bulma-primary-s: 73%;
   --bulma-primary-l: 42%;

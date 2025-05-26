@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppStore } from './AppStore';
+import { SelectedAlbumList } from './SelectedAlbumList';
 
 export function DesignPanel(): JSX.Element {
   const { albums } = useAppStore();
@@ -29,6 +30,9 @@ export function DesignPanel(): JSX.Element {
 
     if (context) {
       const size = canvas.width / 2;
+      // const bgColors = ['#212922', '#294936', '#3e6259', '#5b8266'];
+      // const bgColors = ['#212922', '#294936', '#3e6259', '#587e63'];
+      const bgColors = ['#17191C', '#202428', '#343a40', '#41474E'];
 
       for (let i = 0; i < 4; ++i) {
         const album = orderedAlbums[i];
@@ -65,7 +69,7 @@ export function DesignPanel(): JSX.Element {
           // Fill remaining slots with a placeholder
           const x = (i % 2) * size;
           const y = Math.floor(i / 2) * size;
-          context.fillStyle = '#000'; // Placeholder color
+          context.fillStyle = bgColors[i];
           context.fillRect(x, y, size, size);
         }
       }
@@ -104,6 +108,7 @@ export function DesignPanel(): JSX.Element {
           onChange={e => setOrder(e.target.value)}
         />
       </div>
+      <SelectedAlbumList />
     </div>
   );
 }
