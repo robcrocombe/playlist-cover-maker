@@ -8,8 +8,9 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "prettier": "prettier --write --check '**/*.{ts,tsx,js,jsx}'"
+    "preview": "vite build && vite preview",
+    "dist": "tsx ./deploy.ts",
+    "format": "prettier --write --check '**/*.{ts,tsx,js,jsx}'"
   },
   "source": "index.html",
   "type": "module",
@@ -63,6 +64,10 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.4.1",
-    "prettier": "3.5.3"
+    "@types/gh-pages": "6.1.0",
+    "gh-pages": "6.3.0",
+    "prettier": "3.5.3",
+    "tsx": "4.19.4",
+    "yesno": "0.4.0"
   }
 }

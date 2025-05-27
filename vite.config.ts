@@ -14,6 +14,7 @@ export default defineConfig({
     port: 9000,
     strictPort: true,
   },
+  base: '/playlist-cover-maker',
   plugins: [
     react(),
     checker({
