@@ -1,0 +1,90 @@
+@use 'bulma/sass/utilities/mixins';
+
+/* html,
+body {
+  height: 100%;
+} */
+
+/* #app,
+.main-container {
+  height: 100%;
+  min-height: 100%;
+} */
+
+.main-container {
+  display: grid;
+}
+
+.divider {
+  background-color: var(--bulma-border);
+}
+
+.results-list {
+  overflow-y: auto;
+}
+
+.design-panel {
+  max-width: 640px;
+}
+
+@include mixins.mobile {
+  .main-container {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1px auto;
+    gap: 16px;
+    padding: 16px 8px;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .results-list {
+    padding-left: 8px;
+    padding-right: 8px;
+    max-height: 330px;
+  }
+
+  .design-panel {
+    width: 100%;
+    max-width: none;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .canvas {
+    width: 80vmin;
+    height: auto;
+  }
+}
+
+@include mixins.tablet {
+  .main-container {
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .results-list {
+    height: calc(100vh - 120px);
+    padding: 0 16px;
+  }
+
+  .toolbar {
+    width: 100%;
+  }
+}
+
+@include mixins.desktop {
+  .main-container {
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .divider {
+    width: 1px;
+    height: 100%;
+  }
+}

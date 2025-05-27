@@ -40,8 +40,8 @@ export function SearchPanel(): JSX.Element {
   }
 
   return (
-    <div className="fill-width">
-      <form className="field has-addons fill-width" onSubmit={submit}>
+    <div className="search-panel">
+      <form className="field has-addons fill-width px-4" onSubmit={submit}>
         <div className="control fill-width">
           <input
             className="input fill-width"

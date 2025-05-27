@@ -14,14 +14,9 @@ export function App(): JSX.Element {
   return (
     <SpotifyStoreProvider>
       <main className="main-container">
-        <div className="columns is-6 is-marginless">
-          <div className="column is-half">
-            <SearchPanel />
-          </div>
-          <div className="column is-half design-panel">
-            <DesignPanel />
-          </div>
-        </div>
+        <SearchPanel />
+        <div className="divider" />
+        <DesignPanel />
       </main>
     </SpotifyStoreProvider>
   );

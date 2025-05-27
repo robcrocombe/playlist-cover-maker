@@ -76,11 +76,9 @@ export function DesignPanel(): JSX.Element {
   }
 
   return (
-    <div className="flex flex-center flex-column">
+    <div className="design-panel flex flex-column">
       <canvas ref={canvasRef} width="1280" height="1280" className="canvas" />
-      <div
-        className="flex flex-center flex-wrap gap-1h mt-4 fill-width"
-        style={{ maxWidth: '640px' }}>
+      <div className="toolbar flex flex-center flex-wrap gap-1h mt-4">
         <button
           type="button"
           className="button is-primary is-outlined"
@@ -101,7 +99,7 @@ export function DesignPanel(): JSX.Element {
       </div>
       <AlbumList />
       {albums.length > 1 && (
-        <p className="m-2">
+        <p className="text-center m-2">
           Drag and drop with <span className="drag-hint">⋮</span> to reorder.
         </p>
       )}
