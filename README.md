@@ -1,3 +1,3 @@
-# Playlist Cover Art Maker
+# Playlist Cover Maker
 
-Make playlist cover art with albums
+Make playlist cover art with an album collage.

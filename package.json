@@ -1,5 +1,5 @@
 {
-  "name": "playlist-cover-art",
+  "name": "playlist-cover-maker",
   "description": "Make playlist cover art with albums",
   "version": "1.0.0",
   "engines": {
@@ -15,13 +15,13 @@
   "type": "module",
   "license": "ISC",
   "author": "Rob Crocombe <me@robcrocombe.com> (http://robcrocombe.com)",
-  "homepage": "https://github.com/robcrocombe/playlist-cover-art#readme",
+  "homepage": "https://github.com/robcrocombe/playlist-cover-maker#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robcrocombe/playlist-cover-art.git"
+    "url": "git+https://github.com/robcrocombe/playlist-cover-maker.git"
   },
   "bugs": {
-    "url": "https://github.com/robcrocombe/playlist-cover-art/issues"
+    "url": "https://github.com/robcrocombe/playlist-cover-maker/issues"
   },
   "browserslist": [
     "defaults"

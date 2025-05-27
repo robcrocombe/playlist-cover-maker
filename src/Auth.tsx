@@ -39,7 +39,7 @@ export function Auth(): JSX.Element {
 
   return (
     <form className="m-5 pl-2" style={{ maxWidth: '540px' }} autoComplete="off" onSubmit={submit}>
-      <h1 className="title is-3">Playlist Cover Art Maker</h1>
+      <h1 className="title is-3">Playlist Cover Maker</h1>
       <div className="field">
         <label className="label" htmlFor="clientId">
           Client ID
