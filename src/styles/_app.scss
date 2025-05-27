@@ -1,35 +1,6 @@
 @use 'bulma/sass/utilities/mixins';
 
-/* .main-container {
-  padding: 0.25rem;
-
-  & > .columns {
-    margin: 0 !important;
-  }
-} */
-
-/* .results-list {
-  overflow-y: auto;
-  max-height: 640px;
-} */
-
-@include mixins.mobile {
-  .design-panel {
-    /* border-top: 1px solid var(--bulma-border); */
-  }
-}
-
-@include mixins.tablet {
-  .design-panel {
-    /* border-left: 1px solid var(--bulma-border); */
-  }
-}
-
 @include mixins.desktop {
-  /* .main-container {
-    padding: 1.25rem;
-  } */
-
   .sign-out {
     margin-left: auto;
   }
