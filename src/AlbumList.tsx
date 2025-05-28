@@ -1,3 +1,5 @@
+import { type SimplifiedAlbum, type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
+import { type PropsWithChildren } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import { useAppStore } from './AppStore';
 
@@ -16,35 +18,55 @@ export function AlbumList(): JSX.Element {
         animation={200}>
         {albums.map(album => {
           return (
-            <li className="list-item bg-default" key={album.id}>
-              <div className="list-item-image">
-                <figure className="image is-64x64">
-                  <img src={album.images[0].url} alt={album.name} />
-                </figure>
-              </div>
-              <div className="list-item-content">
-                <div className="list-item-title">{album.name}</div>
-                <div className="list-item-description">
-                  {album.artists.map(artist => artist.name).join(', ')}
-                </div>
-              </div>
-              <div className="list-item-controls">
-                <div className="buttons is-right">
-                  <button className="button is-small drag-handle" title="Drag to reorder">
-                    <span className="icon">⋮</span>
-                  </button>
-                  <button
-                    className="button is-small"
-                    title="Remove album"
-                    onClick={() => setAlbums(albums.filter(a => a.id !== album.id))}>
-                    Remove
-                  </button>
-                </div>
-              </div>
-            </li>
+            <ListItem key={album.id} item={album}>
+              <button className="button is-small drag-handle" title="Drag to reorder">
+                <span className="icon">⋮</span>
+              </button>
+              <button
+                className="button is-small"
+                title="Remove album"
+                onClick={() => setAlbums(albums.filter(a => a.id !== album.id))}>
+                Remove
+              </button>
+            </ListItem>
           );
         })}
       </ReactSortable>
     </ul>
   );
+}
+
+interface ListItemProps {
+  item: SimplifiedAlbum | SimplifiedPlaylist;
+}
+
+function ListItem({ item, children }: PropsWithChildren<ListItemProps>): JSX.Element {
+  const artists = (item as SimplifiedAlbum).artists;
+  const tracks = (item as SimplifiedPlaylist).tracks;
+
+  return (
+    <li className="list-item bg-default">
+      <div className="list-item-image">
+        <figure className="image is-64x64">
+          <img src={item.images[0].url} alt={item.name} />
+        </figure>
+      </div>
+      <div className="list-item-content">
+        <div className="list-item-title">{item.name}</div>
+        <div className="list-item-description">
+          {artists && artists.map(artist => artist.name).join(', ')}
+          {tracks && `${tracks.total || 0} ${pluralise('song', tracks.total)}`}
+        </div>
+      </div>
+      {children && (
+        <div className="list-item-controls">
+          <div className="buttons is-right">{children}</div>
+        </div>
+      )}
+    </li>
+  );
+}
+
+function pluralise(str: string, count: number | undefined): string {
+  return count === 1 ? str : `${str}s`;
 }

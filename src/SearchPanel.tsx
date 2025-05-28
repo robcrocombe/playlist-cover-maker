@@ -2,6 +2,7 @@ import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import cx from 'classnames';
 import { useState, type FormEvent } from 'react';
 import { useAppStore } from './AppStore';
+import { Icon } from './Icon';
 import { useSpotifyStore } from './SpotifyStore';
 
 export function SearchPanel(): JSX.Element {
@@ -41,6 +42,26 @@ export function SearchPanel(): JSX.Element {
 
   return (
     <div className="search-panel">
+      <div className="tabs is-fullwidth is-boxed">
+        <ul>
+          <li className="is-active">
+            <a>
+              <span className="icon is-small">
+                <Icon icon="playlist" />
+              </span>
+              <span>Playlists</span>
+            </a>
+          </li>
+          <li>
+            <a>
+              <span className="icon is-small">
+                <Icon icon="search" />
+              </span>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
       <form className="field has-addons fill-width px-4" onSubmit={submit}>
         <div className="control fill-width">
           <input

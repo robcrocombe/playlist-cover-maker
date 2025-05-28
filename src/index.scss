@@ -8,6 +8,7 @@
 @use 'bulma/sass/elements/button';
 @use 'bulma/sass/elements/image';
 @use 'bulma/sass/elements/title';
+@use 'bulma/sass/components/tabs';
 @use 'bulma/sass/utilities/mixins';
 
 @use 'bulma-list/sass/bulma-list';
@@ -34,6 +35,7 @@
   --bulma-danger-s: 96%;
   --bulma-danger-l: 64%;
   --bulma-scheme-main-bis-l: 14%;
+  --bulma-border-l: 40%;
   // --bulma-text-l: 80%;
 }
 
@@ -44,12 +46,7 @@
 }
 
 .input {
-  --bulma-input-border-l: 40%;
   --bulma-input-placeholder-color: hsla(221deg, 14%, 93%, 0.5);
-}
-
-.button {
-  --bulma-button-border-l: 40%;
 }
 
 .title {

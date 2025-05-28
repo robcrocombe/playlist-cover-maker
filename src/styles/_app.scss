@@ -6,6 +6,18 @@
   }
 }
 
+.svg-icon {
+  display: contents;
+
+  & svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: text-top;
+    position: relative;
+    top: 1px;
+  }
+}
+
 .canvas {
   background: #000;
   width: 100%;
