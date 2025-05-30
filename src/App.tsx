@@ -5,9 +5,9 @@ import { SearchPanel } from './SearchPanel';
 import { SpotifyStoreProvider } from './SpotifyStore';
 
 export function App(): JSX.Element {
-  const { token } = useAppStore();
+  const { hasSession } = useAppStore();
 
-  if (!token) {
+  if (!hasSession) {
     return <Auth />;
   }
 

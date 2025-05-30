@@ -1,37 +1,42 @@
-import { type SimplifiedAlbum, type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
+import { type Page, type SimplifiedAlbum, type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import cx from 'classnames';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ListItem } from './AlbumList';
 import { useAppStore } from './AppStore';
 import { Icon } from './Icon';
-import { fetchPlaylists } from './spotify';
 import { useSpotifyStore } from './SpotifyStore';
 
-export function SearchPanel(): JSX.Element {
+export function SearchPanel2(): JSX.Element {
   return <PlaylistPanel />;
 }
 
-export function SearchPanel2(): JSX.Element {
+export function SearchPanel(): JSX.Element {
+  const [input, setInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<SimplifiedAlbum[]>([]);
-  const [loading, setLoading] = useState(false);
 
   const { albums, setAlbums } = useAppStore();
   const { searchAlbums } = useSpotifyStore();
 
-  async function submit(e: FormEvent<HTMLFormElement>) {
+  const { data, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ['search', searchTerm],
+    queryFn: ({ pageParam }) => searchAlbums(searchTerm, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: lastPage => {
+      if (lastPage?.albums) {
+        const nextOffset = lastPage.albums.offset + lastPage.albums.limit;
+        return nextOffset < lastPage.albums.total ? nextOffset : undefined;
+      }
+    },
+    enabled: !!searchTerm,
+  });
+
+  function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!searchTerm.trim() || loading) {
-      return;
+    if (!!input.trim() && !isFetching) {
+      setSearchTerm(input.trim());
     }
-
-    setLoading(true);
-
-    const res = await searchAlbums(searchTerm.trim());
-
-    setSearchResults(res || []);
-    setLoading(false);
   }
 
   function addAlbum(album: SimplifiedAlbum) {
@@ -45,6 +50,8 @@ export function SearchPanel2(): JSX.Element {
   function removeAlbum(album: SimplifiedAlbum) {
     setAlbums(albums.filter(a => a.id !== album.id));
   }
+
+  const searchResults = data?.pages.flatMap(page => page?.albums?.items || []) || [];
 
   return (
     <div className="search-panel">
@@ -74,12 +81,14 @@ export function SearchPanel2(): JSX.Element {
             className="input fill-width"
             type="text"
             placeholder="Search albums…"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            value={input}
+            onChange={e => setInput(e.target.value)}
           />
         </div>
         <div className="control">
-          <button type="submit" className={cx('button', { 'is-loading': loading })}>
+          <button
+            type="submit"
+            className={cx('button', { 'is-loading': isFetching && !isFetchingNextPage })}>
             Search
           </button>
         </div>
@@ -111,6 +120,17 @@ export function SearchPanel2(): JSX.Element {
               </ListItem>
             );
           })}
+          {data?.pages && (
+            <li className="flex my-4">
+              <button
+                type="button"
+                className={cx('button mx-auto px-6', { 'is-loading': isFetchingNextPage })}
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isFetching}>
+                Load more
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </div>
@@ -120,11 +140,11 @@ export function SearchPanel2(): JSX.Element {
 interface PlaylistPanelProps {}
 
 function PlaylistPanel({}: PlaylistPanelProps): JSX.Element {
-  const [playlists, setPlaylists] = useState<SimplifiedPlaylist[]>();
-  const { token } = useAppStore();
+  const [playlists, setPlaylists] = useState<Page<SimplifiedPlaylist>>();
+  const { getPlaylists } = useSpotifyStore();
 
   useEffect(() => {
-    fetchPlaylists(token)
+    getPlaylists()
       .then(setPlaylists)
       .catch(err => {
         console.error(err);
@@ -134,7 +154,7 @@ function PlaylistPanel({}: PlaylistPanelProps): JSX.Element {
   return (
     <div className="results-list">
       <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
-        {playlists?.map(result => {
+        {playlists?.items?.map(result => {
           return <ListItem key={result.id} item={result}></ListItem>;
         })}
       </ul>

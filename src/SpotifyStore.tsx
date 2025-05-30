@@ -1,33 +1,72 @@
-import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import type { Page, SearchResults, SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
+import { isAxiosError } from 'axios';
 import { createContext, useCallback, useContext, type PropsWithChildren } from 'react';
 import { useAppStore } from './AppStore';
-import { fetchAlbums } from './spotify';
+import { fetchAlbums, fetchPlaylists, refreshToken } from './spotify';
 
-interface SpotifyStore {
-  searchAlbums: (query: string) => Promise<SimplifiedAlbum[] | undefined>;
-}
+type SpotifyStoreData = ReturnType<typeof SpotifyStore>;
 
-function SpotifyStore(): SpotifyStore {
-  const { token, expires, endSession } = useAppStore();
+function SpotifyStore() {
+  const { endSession } = useAppStore();
 
   const searchAlbums = useCallback(
-    async (query: string): Promise<SimplifiedAlbum[] | undefined> => {
-      if (!token || !expires || Date.now() > expires) {
-        endSession();
-        return;
-      }
-
-      return fetchAlbums(token, query);
+    (query: string, offset: number = 0): Promise<SearchResults<['album']> | undefined> => {
+      return fetchWithAuth(token => fetchAlbums(token, query, offset), endSession);
     },
-    [token]
+    []
   );
 
-  return { searchAlbums };
+  const getPlaylists = useCallback(
+    (offset: number = 0): Promise<Page<SimplifiedPlaylist> | undefined> => {
+      return fetchWithAuth(token => fetchPlaylists(token, offset), endSession);
+    },
+    []
+  );
+
+  return { searchAlbums, getPlaylists };
 }
 
-const SpotifyStoreContext = createContext<SpotifyStore | null>(null);
+async function fetchWithAuth<T>(
+  callback: (token: string) => Promise<T>,
+  endSession: () => void,
+  refreshAttempted: boolean = false
+): Promise<T | undefined> {
+  try {
+    const token = localStorage.getItem('token');
 
-export function useSpotifyStore(): SpotifyStore {
+    if (!token) {
+      endSession();
+      return Promise.resolve(undefined);
+    }
+
+    return await callback(token);
+  } catch (err) {
+    // Attempt to refresh the token if we get a 401 Unauthorized error
+    if (isAxiosError(err) && err.response?.status === 401) {
+      try {
+        await refreshToken();
+
+        // Retry the original request after a successful refresh
+        // with a flag to prevent an infinite loop
+        if (!refreshAttempted) {
+          return await fetchWithAuth(callback, endSession, true);
+        } else {
+          console.error('Refresh token failed multiple times, ending session.');
+          endSession();
+        }
+      } catch (refreshErr) {
+        console.error(refreshErr);
+        endSession();
+      }
+    } else {
+      throw err;
+    }
+  }
+}
+
+const SpotifyStoreContext = createContext<SpotifyStoreData | null>(null);
+
+export function useSpotifyStore(): SpotifyStoreData {
   const store = useContext(SpotifyStoreContext);
   if (!store) {
     throw new Error('useSpotifyStore must be used within a SpotifyStoreProvider.');

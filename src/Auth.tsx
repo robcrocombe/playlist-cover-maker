@@ -4,7 +4,6 @@ import { useAppStore } from './AppStore';
 import { fetchToken, getAuthUrl } from './spotify';
 
 export function Auth(): JSX.Element {
-  const clientId = import.meta.env.VITE_CLIENT_ID;
   const urlParams = new URLSearchParams(location.search);
   const redirectCode = urlParams.get('code');
   const redirectState = urlParams.get('state');
@@ -14,15 +13,10 @@ export function Auth(): JSX.Element {
   const { startSession } = useAppStore();
 
   async function submit() {
-    if (!clientId) {
-      console.error('Spotify client ID not set.');
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const authUrl = await getAuthUrl(clientId);
+      const authUrl = await getAuthUrl();
 
       setLoading(false);
       location.href = authUrl;
@@ -42,13 +36,11 @@ export function Auth(): JSX.Element {
         return;
       }
 
-      fetchToken(clientId, redirectCode).then(res => {
-        if (res?.access_token && res.expires_in && res.refresh_token) {
-          const expirationTime = Date.now() + res.expires_in * 1000;
-          startSession(res.access_token, expirationTime, res.refresh_token);
-        } else {
-          console.error('No access token found in response');
-        }
+      // Clear URL params without reloading
+      history.replaceState({}, '', location.pathname);
+
+      fetchToken(redirectCode).then(() => {
+        startSession();
       });
     }
   }, [redirectCode]);
@@ -60,7 +52,7 @@ export function Auth(): JSX.Element {
         type="button"
         className={cx('button is-primary mt-2', { 'is-loading': loading })}
         onClick={submit}
-        disabled={!clientId || loading}>
+        disabled={loading}>
         Login with Spotify
       </button>
     </div>

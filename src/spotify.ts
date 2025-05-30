@@ -2,13 +2,14 @@ import {
   type AccessToken,
   type Page,
   type SearchResults,
-  type SimplifiedAlbum,
   type SimplifiedPlaylist,
 } from '@spotify/web-api-ts-sdk';
 import axios from 'axios';
 
+export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+
 // Authorization code with PKCE flow
-export async function getAuthUrl(clientId: string): Promise<string> {
+export async function getAuthUrl(): Promise<string> {
   const codeVerifier = generateRandomId(128);
   const codeChallenge = await getCodeChallenge(codeVerifier);
   const state = generateRandomId(16);
@@ -21,7 +22,7 @@ export async function getAuthUrl(clientId: string): Promise<string> {
 
   const params = {
     response_type: 'code',
-    client_id: clientId,
+    client_id: CLIENT_ID,
     scope,
     state,
     code_challenge_method: 'S256',
@@ -33,72 +34,88 @@ export async function getAuthUrl(clientId: string): Promise<string> {
   return authUrl.toString();
 }
 
-export async function fetchToken(clientId: string, code: string): Promise<AccessToken | undefined> {
-  try {
-    const codeVerifier = localStorage.getItem('codeVerifier');
+export async function fetchToken(code: string): Promise<void> {
+  const codeVerifier = localStorage.getItem('codeVerifier');
 
-    const res = await axios.post(
-      'https://accounts.spotify.com/api/token',
-      {
-        client_id: clientId,
-        grant_type: 'authorization_code',
-        redirect_uri: getRedirectUrl(),
-        code_verifier: codeVerifier,
-        code,
-      },
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    );
-    return res.data;
-  } catch (err) {
-    console.error(err);
+  if (!codeVerifier) {
+    console.error('No code verifier found');
+    return;
+  }
+
+  const res = await axios.post<AccessToken>(
+    'https://accounts.spotify.com/api/token',
+    {
+      client_id: CLIENT_ID,
+      grant_type: 'authorization_code',
+      redirect_uri: getRedirectUrl(),
+      code_verifier: codeVerifier,
+      code,
+    },
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+  );
+
+  if (res.data.access_token && res.data.refresh_token) {
+    localStorage.setItem('token', res.data.access_token);
+    localStorage.setItem('refreshToken', res.data.refresh_token);
+  } else {
+    console.error('No access token found in response');
+    return;
+  }
+}
+
+export async function refreshToken(): Promise<void> {
+  const refreshToken = localStorage.getItem('refreshToken');
+
+  if (!refreshToken) {
+    console.error('No refresh token found');
+    return;
+  }
+
+  const res = await axios.post<AccessToken>(
+    'https://accounts.spotify.com/api/token',
+    {
+      client_id: CLIENT_ID,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    },
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+  );
+
+  if (res.data.access_token && res.data.refresh_token) {
+    localStorage.setItem('token', res.data.access_token);
+    localStorage.setItem('refreshToken', res.data.refresh_token);
+  } else {
+    console.error('No access token found in response');
   }
 }
 
 export async function fetchAlbums(
-  token: string | undefined,
-  query: string
-): Promise<SimplifiedAlbum[] | undefined> {
-  if (!token) {
-    console.error('No token found');
-    return;
-  }
+  token: string,
+  query: string,
+  offset: number
+): Promise<SearchResults<['album']> | undefined> {
+  const res = await axios.get<SearchResults<['album']>>('https://api.spotify.com/v1/search', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: { q: query, type: 'album', offset },
+  });
 
-  try {
-    const res = await axios.get<SearchResults<['album']>>('https://api.spotify.com/v1/search', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: { q: query, type: 'album' },
-    });
-
-    return res.data.albums.items;
-  } catch (err) {
-    console.error(err);
-  }
+  return res.data;
 }
 
 export async function fetchPlaylists(
-  token: string | undefined
-): Promise<SimplifiedPlaylist[] | undefined> {
-  if (!token) {
-    console.error('No token found');
-    return;
-  }
+  token: string,
+  offset: number
+): Promise<Page<SimplifiedPlaylist> | undefined> {
+  const res = await axios.get<Page<SimplifiedPlaylist>>('https://api.spotify.com/v1/me/playlists', {
+    params: { offset },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  try {
-    const res = await axios.get<Page<SimplifiedPlaylist>>(
-      'https://api.spotify.com/v1/me/playlists',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    return res.data.items;
-  } catch (err) {
-    console.error(err);
-  }
+  return res.data;
 }
 
 function getRedirectUrl(): string {

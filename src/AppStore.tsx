@@ -1,61 +1,28 @@
 import { type SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import { createContext, useCallback, useContext, useState, type PropsWithChildren } from 'react';
 
-interface AppStoreData {
-  albums: SimplifiedAlbum[];
-  setAlbums: SetState<SimplifiedAlbum[]>;
-  token: string | undefined;
-  expires: number | undefined;
-  refreshToken: string | undefined;
-  startSession: (token: string, expires: number, refreshToken: string) => void;
-  endSession: () => void;
-}
+type AppStoreData = ReturnType<typeof AppStore>;
 
-function AppStore(): AppStoreData {
+function AppStore() {
   const [albums, setAlbums] = useState<SimplifiedAlbum[]>([]);
 
-  const [expires, setExpires] = useState(() => {
-    const expires = localStorage.getItem('expires');
-    if (!expires || Date.now() > parseInt(expires, 10)) {
-      return undefined;
-    }
-    return parseInt(expires, 10);
+  const [hasSession, setHasSession] = useState(() => {
+    return !!localStorage.getItem('token') && !!localStorage.getItem('refreshToken');
   });
 
-  const [token, setToken] = useState(() => {
-    const token = localStorage.getItem('token');
-    if (!token || !expires || Date.now() > expires) {
-      return;
-    }
-    return token;
-  });
-
-  const [refreshToken, setRefreshToken] = useState(() => {
-    return localStorage.getItem('refreshToken') || undefined;
-  });
-
-  const startSession = useCallback((t: string, e: number, r: string) => {
-    setToken(t);
-    setExpires(e);
-    setRefreshToken(r);
-    localStorage.setItem('token', t);
-    localStorage.setItem('expires', e.toString());
-    localStorage.setItem('refreshToken', r);
+  const startSession = useCallback(() => {
+    setHasSession(true);
   }, []);
 
   const endSession = useCallback(() => {
-    setToken(undefined);
-    setExpires(undefined);
-    setRefreshToken(undefined);
+    setHasSession(false);
     localStorage.clear();
   }, []);
 
   return {
     albums,
     setAlbums,
-    token,
-    expires,
-    refreshToken,
+    hasSession,
     startSession,
     endSession,
   };
