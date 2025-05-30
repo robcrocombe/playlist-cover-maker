@@ -6,7 +6,8 @@ interface AppStoreData {
   setAlbums: SetState<SimplifiedAlbum[]>;
   token: string | undefined;
   expires: number | undefined;
-  startSession: (token: string, expires: number) => void;
+  refreshToken: string | undefined;
+  startSession: (token: string, expires: number, refreshToken: string) => void;
   endSession: () => void;
 }
 
@@ -29,16 +30,23 @@ function AppStore(): AppStoreData {
     return token;
   });
 
-  const startSession = useCallback((t: string, e: number) => {
+  const [refreshToken, setRefreshToken] = useState(() => {
+    return localStorage.getItem('refreshToken') || undefined;
+  });
+
+  const startSession = useCallback((t: string, e: number, r: string) => {
     setToken(t);
     setExpires(e);
+    setRefreshToken(r);
     localStorage.setItem('token', t);
     localStorage.setItem('expires', e.toString());
+    localStorage.setItem('refreshToken', r);
   }, []);
 
   const endSession = useCallback(() => {
     setToken(undefined);
     setExpires(undefined);
+    setRefreshToken(undefined);
     localStorage.clear();
   }, []);
 
@@ -47,6 +55,7 @@ function AppStore(): AppStoreData {
     setAlbums,
     token,
     expires,
+    refreshToken,
     startSession,
     endSession,
   };

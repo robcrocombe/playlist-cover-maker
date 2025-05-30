@@ -28,6 +28,16 @@ body {
 }
 
 @include mixins.mobile {
+  .auth-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    & .title {
+      text-align: center;
+    }
+  }
+
   .main-container {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1px auto;

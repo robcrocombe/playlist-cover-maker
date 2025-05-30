@@ -17,6 +17,6 @@ node_modules
 # Optional npm cache directory
 .npm
 
-.parcel-cache
+*.local
 *.DS_Store
 dist

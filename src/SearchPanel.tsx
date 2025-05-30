@@ -1,11 +1,17 @@
-import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import { type SimplifiedAlbum, type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
 import cx from 'classnames';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { ListItem } from './AlbumList';
 import { useAppStore } from './AppStore';
 import { Icon } from './Icon';
+import { fetchPlaylists } from './spotify';
 import { useSpotifyStore } from './SpotifyStore';
 
 export function SearchPanel(): JSX.Element {
+  return <PlaylistPanel />;
+}
+
+export function SearchPanel2(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<SimplifiedAlbum[]>([]);
   const [loading, setLoading] = useState(false);
@@ -85,45 +91,53 @@ export function SearchPanel(): JSX.Element {
             const disabled = albums.length >= 4;
 
             return (
-              <li className="list-item" key={result.id}>
-                <div className="list-item-image">
-                  <figure className="image is-64x64">
-                    <img src={result.images[0].url} alt={result.name} />
-                  </figure>
-                </div>
-
-                <div className="list-item-content">
-                  <div className="list-item-title">{result.name}</div>
-                  <div className="list-item-description">
-                    {result.artists.map(artist => artist.name).join(', ')}
-                  </div>
-                </div>
-
-                <div className="list-item-controls">
-                  <div className="buttons is-right">
-                    {isSelected && (
-                      <button type="button" className="button" onClick={() => removeAlbum(result)}>
-                        Remove
-                      </button>
-                    )}
-                    {!isSelected && (
-                      <button
-                        type="button"
-                        className={cx('button', {
-                          'is-outlined is-link': !disabled,
-                        })}
-                        disabled={disabled}
-                        onClick={() => addAlbum(result)}>
-                        Add Album
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </li>
+              <ListItem key={result.id} item={result}>
+                {isSelected && (
+                  <button type="button" className="button" onClick={() => removeAlbum(result)}>
+                    Remove
+                  </button>
+                )}
+                {!isSelected && (
+                  <button
+                    type="button"
+                    className={cx('button', {
+                      'is-outlined is-link': !disabled,
+                    })}
+                    disabled={disabled}
+                    onClick={() => addAlbum(result)}>
+                    Add Album
+                  </button>
+                )}
+              </ListItem>
             );
           })}
         </ul>
       </div>
+    </div>
+  );
+}
+
+interface PlaylistPanelProps {}
+
+function PlaylistPanel({}: PlaylistPanelProps): JSX.Element {
+  const [playlists, setPlaylists] = useState<SimplifiedPlaylist[]>();
+  const { token } = useAppStore();
+
+  useEffect(() => {
+    fetchPlaylists(token)
+      .then(setPlaylists)
+      .catch(err => {
+        console.error(err);
+      });
+  }, []);
+
+  return (
+    <div className="results-list">
+      <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
+        {playlists?.map(result => {
+          return <ListItem key={result.id} item={result}></ListItem>;
+        })}
+      </ul>
     </div>
   );
 }

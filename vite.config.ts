@@ -3,12 +3,15 @@ import autoprefixer from 'autoprefixer';
 import { defineConfig, type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import csp from 'vite-plugin-csp-guard';
+import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig({
   server: {
     port: 9000,
     strictPort: true,
     hmr: { overlay: false },
+    // Use localhost IP to comply with Spotify redirect URI requirements
+    host: '127.0.0.1',
   },
   preview: {
     port: 9000,
@@ -16,6 +19,7 @@ export default defineConfig({
   },
   base: '/playlist-cover-maker',
   plugins: [
+    mkcert(),
     react(),
     checker({
       typescript: true,

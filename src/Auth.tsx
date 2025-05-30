@@ -1,86 +1,68 @@
 import cx from 'classnames';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppStore } from './AppStore';
-import { fetchToken } from './spotify';
+import { fetchToken, getAuthUrl } from './spotify';
 
 export function Auth(): JSX.Element {
-  const [clientId, setClientId] = useState(() => {
-    return localStorage.getItem('clientId') || '';
-  });
-  const [clientSecret, setClientSecret] = useState(() => {
-    return localStorage.getItem('clientSecret') || '';
-  });
-  const [loading, setLoading] = useState(false);
+  const clientId = import.meta.env.VITE_CLIENT_ID;
+  const urlParams = new URLSearchParams(location.search);
+  const redirectCode = urlParams.get('code');
+  const redirectState = urlParams.get('state');
+
+  const [loading, setLoading] = useState(!!redirectCode && !!redirectState);
 
   const { startSession } = useAppStore();
 
-  async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (!clientId || !clientSecret) {
+  async function submit() {
+    if (!clientId) {
+      console.error('Spotify client ID not set.');
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetchToken(clientId, clientSecret);
+      const authUrl = await getAuthUrl(clientId);
 
-      if (res?.access_token && res.expires_in) {
-        const expirationTime = Date.now() + res.expires_in * 1000;
-        startSession(res.access_token, expirationTime);
-      }
+      setLoading(false);
+      location.href = authUrl;
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
+  useEffect(() => {
+    if (redirectCode && redirectState) {
+      const localState = localStorage.getItem('state');
+
+      if (localState !== redirectState) {
+        console.error('State mismatch');
+        setLoading(false);
+        return;
+      }
+
+      fetchToken(clientId, redirectCode).then(res => {
+        if (res?.access_token && res.expires_in && res.refresh_token) {
+          const expirationTime = Date.now() + res.expires_in * 1000;
+          startSession(res.access_token, expirationTime, res.refresh_token);
+        } else {
+          console.error('No access token found in response');
+        }
+      });
+    }
+  }, [redirectCode]);
+
   return (
-    <form className="m-5 pl-2" style={{ maxWidth: '540px' }} autoComplete="off" onSubmit={submit}>
+    <div className="auth-container m-5 pl-3 pt-2">
       <h1 className="title is-3">Playlist Cover Maker</h1>
-      <div className="field">
-        <label className="label" htmlFor="clientId">
-          Client ID
-        </label>
-        <div className="control">
-          <input
-            type="text"
-            className="input"
-            value={clientId}
-            name="clientId"
-            onChange={e => setClientId(e.target.value)}
-          />
-        </div>
-      </div>
-      <div className="field">
-        <label className="label" htmlFor="clientSecret">
-          Client Secret
-        </label>
-        <div className="control">
-          <input
-            type="text"
-            className="input"
-            value={clientSecret}
-            name="clientSecret"
-            onChange={e => setClientSecret(e.target.value)}
-          />
-        </div>
-      </div>
       <button
-        type="submit"
+        type="button"
         className={cx('button is-primary mt-2', { 'is-loading': loading })}
-        disabled={!clientId || !clientSecret || loading}>
-        Auth with Spotify
+        onClick={submit}
+        disabled={!clientId || loading}>
+        Login with Spotify
       </button>
-      <p className="mt-3">
-        Get your client ID and client secret from the{' '}
-        <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noreferrer">
-          Spotify Developer dashboard
-        </a>
-        .
-      </p>
-    </form>
+    </div>
   );
 }

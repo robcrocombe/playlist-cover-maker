@@ -40,22 +40,26 @@ interface ListItemProps {
   item: SimplifiedAlbum | SimplifiedPlaylist;
 }
 
-function ListItem({ item, children }: PropsWithChildren<ListItemProps>): JSX.Element {
+export function ListItem({ item, children }: PropsWithChildren<ListItemProps>): JSX.Element {
   const artists = (item as SimplifiedAlbum).artists;
   const tracks = (item as SimplifiedPlaylist).tracks;
 
   return (
     <li className="list-item bg-default">
       <div className="list-item-image">
-        <figure className="image is-64x64">
-          <img src={item.images[0].url} alt={item.name} />
-        </figure>
+        {item.images?.[0]?.url ? (
+          <figure className="image is-64x64">
+            <img src={item.images?.[0]?.url} alt={item.name} />
+          </figure>
+        ) : (
+          <div className="image is-64x64 cover-placeholder" />
+        )}
       </div>
       <div className="list-item-content">
         <div className="list-item-title">{item.name}</div>
         <div className="list-item-description">
           {artists && artists.map(artist => artist.name).join(', ')}
-          {tracks && `${tracks.total || 0} ${pluralise('song', tracks.total)}`}
+          {tracks && `${tracks.total || 0} ${pluralise('track', tracks.total)}`}
         </div>
       </div>
       {children && (
