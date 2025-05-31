@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useAppStore } from './AppStore';
 import { fetchToken, getAuthUrl } from './spotify';
 
@@ -22,6 +23,7 @@ export function Auth(): JSX.Element {
       location.href = authUrl;
     } catch (err) {
       console.log(err);
+      toast.error('Failed to get authorization URL');
       setLoading(false);
     }
   }
@@ -32,6 +34,7 @@ export function Auth(): JSX.Element {
 
       if (localState !== redirectState) {
         console.error('State mismatch');
+        toast.error('State mismatch. Please try again.');
         setLoading(false);
         return;
       }

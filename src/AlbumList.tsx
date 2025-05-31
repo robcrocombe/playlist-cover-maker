@@ -49,7 +49,13 @@ export function ListItem({ item, children }: PropsWithChildren<ListItemProps>): 
       <div className="list-item-image">
         {item.images?.[0]?.url ? (
           <figure className="image is-64x64">
-            <img src={item.images?.[0]?.url} alt={item.name} />
+            <img
+              src={item.images?.[0]?.url}
+              alt={item.name}
+              width={64}
+              height={64}
+              loading="lazy"
+            />
           </figure>
         ) : (
           <div className="image is-64x64 cover-placeholder" />

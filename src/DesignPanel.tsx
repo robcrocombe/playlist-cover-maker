@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { AlbumList } from './AlbumList';
 import { useAppStore } from './AppStore';
 
 export function DesignPanel(): JSX.Element {
   const { albums, setAlbums, endSession } = useAppStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const dlCount = useRef(1);
 
   useEffect(() => {
@@ -61,18 +63,41 @@ export function DesignPanel(): JSX.Element {
     }
   }, [albums]);
 
-  function downloadCover() {
+  async function downloadCover() {
     if (!canvasRef.current) {
       return;
     }
 
-    const canvas = canvasRef.current;
-    const link = document.createElement('a');
-    link.download = `playlist-cover-${dlCount.current}.jpg`;
-    dlCount.current += 1;
-    link.href = canvas.toDataURL('image/jpeg', 1);
-    link.click();
-    link.remove();
+    setIsLoading(true);
+
+    try {
+      const canvas = canvasRef.current;
+      const link = document.createElement('a');
+      link.download = `playlist-cover-${dlCount.current}.jpg`;
+      dlCount.current += 1;
+
+      canvas.toBlob(
+        blob => {
+          if (blob) {
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+          } else {
+            toast.error('Failed to create image from canvas');
+          }
+          setIsLoading(false);
+        },
+        'image/jpeg',
+        1
+      );
+
+      // link.href = canvas.toDataURL('image/jpeg', 1);
+      // link.click();
+      // link.remove();
+    } catch (err) {
+      console.error('Error downloading cover:', err);
+      toast.error('Failed to download cover');
+    }
   }
 
   return (
@@ -82,7 +107,7 @@ export function DesignPanel(): JSX.Element {
         <button
           type="button"
           className="button is-primary is-outlined"
-          disabled={albums.length < 4}
+          disabled={albums.length < 4 || isLoading}
           onClick={downloadCover}>
           Download Playlist Cover
         </button>

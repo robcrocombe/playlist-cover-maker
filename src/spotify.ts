@@ -1,10 +1,12 @@
 import {
   type AccessToken,
   type Page,
+  type PlaylistedTrack,
   type SearchResults,
   type SimplifiedPlaylist,
 } from '@spotify/web-api-ts-sdk';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
@@ -17,7 +19,12 @@ export async function getAuthUrl(): Promise<string> {
   localStorage.setItem('codeVerifier', codeVerifier);
   localStorage.setItem('state', state);
 
-  const scope = 'playlist-read-private';
+  const scope = [
+    'playlist-read-private',
+    'playlist-modify-public',
+    'playlist-modify-private',
+    'ugc-image-upload',
+  ].join(',');
   const authUrl = new URL('https://accounts.spotify.com/authorize');
 
   const params = {
@@ -39,6 +46,7 @@ export async function fetchToken(code: string): Promise<void> {
 
   if (!codeVerifier) {
     console.error('No code verifier found');
+    toast.error('No code verifier found. Please try again.');
     return;
   }
 
@@ -59,6 +67,7 @@ export async function fetchToken(code: string): Promise<void> {
     localStorage.setItem('refreshToken', res.data.refresh_token);
   } else {
     console.error('No access token found in response');
+    toast.error('Failed to fetch access token. Please try again.');
     return;
   }
 }
@@ -68,6 +77,7 @@ export async function refreshToken(): Promise<void> {
 
   if (!refreshToken) {
     console.error('No refresh token found');
+    toast.error('No refresh token found. Please login again.');
     return;
   }
 
@@ -86,6 +96,7 @@ export async function refreshToken(): Promise<void> {
     localStorage.setItem('refreshToken', res.data.refresh_token);
   } else {
     console.error('No access token found in response');
+    toast.error('Failed to refresh access token. Please login again.');
   }
 }
 
@@ -117,6 +128,35 @@ export async function fetchPlaylists(
 
   return res.data;
 }
+
+export async function fetchPlaylistAlbums(
+  token: string,
+  playlistId: string,
+  offset: number
+): Promise<Page<PlaylistedTrack> | undefined> {
+  const res = await axios.get<Page<PlaylistedTrack>>(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    {
+      params: { offset, limit: 50 },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  // const albums = new Set<SimplifiedAlbum>();
+  // res.data.items.forEach(item => {
+  //   if (itemIsMusic(item) && item.track.album) {
+  //     albums.add(item.track.album);
+  //   }
+  // });
+
+  return res.data;
+}
+
+// function itemIsMusic(track: PlaylistedTrack): track is PlaylistedTrack<Track> {
+//   return track.track?.type === 'track';
+// }
 
 function getRedirectUrl(): string {
   return new URL(location.pathname, location.href).href;

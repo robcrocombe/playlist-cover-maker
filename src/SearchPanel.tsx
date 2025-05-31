@@ -1,19 +1,18 @@
-import { type Page, type SimplifiedAlbum, type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
+import { type SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cx from 'classnames';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { ListItem } from './AlbumList';
 import { useAppStore } from './AppStore';
-import { Icon } from './Icon';
 import { useSpotifyStore } from './SpotifyStore';
 
-export function SearchPanel2(): JSX.Element {
-  return <PlaylistPanel />;
+interface SearchPanelProps {
+  input: string;
+  setInput: SetState<string>;
 }
 
-export function SearchPanel(): JSX.Element {
-  const [input, setInput] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+export function SearchPanel({ input, setInput }: SearchPanelProps): JSX.Element {
+  const [searchTerm, setSearchTerm] = useState(input);
 
   const { albums, setAlbums } = useAppStore();
   const { searchAlbums } = useSpotifyStore();
@@ -54,27 +53,7 @@ export function SearchPanel(): JSX.Element {
   const searchResults = data?.pages.flatMap(page => page?.albums?.items || []) || [];
 
   return (
-    <div className="search-panel">
-      <div className="tabs is-fullwidth is-boxed">
-        <ul>
-          <li className="is-active">
-            <a>
-              <span className="icon is-small">
-                <Icon icon="playlist" />
-              </span>
-              <span>Playlists</span>
-            </a>
-          </li>
-          <li>
-            <a>
-              <span className="icon is-small">
-                <Icon icon="search" />
-              </span>
-              <span>Search</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div>
       <form className="field has-addons fill-width px-4" onSubmit={submit}>
         <div className="control fill-width">
           <input
@@ -114,7 +93,7 @@ export function SearchPanel(): JSX.Element {
                     })}
                     disabled={disabled}
                     onClick={() => addAlbum(result)}>
-                    Add Album
+                    Add album
                   </button>
                 )}
               </ListItem>
@@ -133,31 +112,6 @@ export function SearchPanel(): JSX.Element {
           )}
         </ul>
       </div>
-    </div>
-  );
-}
-
-interface PlaylistPanelProps {}
-
-function PlaylistPanel({}: PlaylistPanelProps): JSX.Element {
-  const [playlists, setPlaylists] = useState<Page<SimplifiedPlaylist>>();
-  const { getPlaylists } = useSpotifyStore();
-
-  useEffect(() => {
-    getPlaylists()
-      .then(setPlaylists)
-      .catch(err => {
-        console.error(err);
-      });
-  }, []);
-
-  return (
-    <div className="results-list">
-      <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
-        {playlists?.items?.map(result => {
-          return <ListItem key={result.id} item={result}></ListItem>;
-        })}
-      </ul>
     </div>
   );
 }

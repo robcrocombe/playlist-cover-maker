@@ -1,6 +1,6 @@
-import type { Page, SearchResults, SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
 import { isAxiosError } from 'axios';
 import { createContext, useCallback, useContext, type PropsWithChildren } from 'react';
+import { toast } from 'react-toastify';
 import { useAppStore } from './AppStore';
 import { fetchAlbums, fetchPlaylists, refreshToken } from './spotify';
 
@@ -9,19 +9,13 @@ type SpotifyStoreData = ReturnType<typeof SpotifyStore>;
 function SpotifyStore() {
   const { endSession } = useAppStore();
 
-  const searchAlbums = useCallback(
-    (query: string, offset: number = 0): Promise<SearchResults<['album']> | undefined> => {
-      return fetchWithAuth(token => fetchAlbums(token, query, offset), endSession);
-    },
-    []
-  );
+  const searchAlbums = useCallback((query: string, offset: number = 0) => {
+    return fetchWithAuth(token => fetchAlbums(token, query, offset), endSession);
+  }, []);
 
-  const getPlaylists = useCallback(
-    (offset: number = 0): Promise<Page<SimplifiedPlaylist> | undefined> => {
-      return fetchWithAuth(token => fetchPlaylists(token, offset), endSession);
-    },
-    []
-  );
+  const getPlaylists = useCallback((offset: number = 0) => {
+    return fetchWithAuth(token => fetchPlaylists(token, offset), endSession);
+  }, []);
 
   return { searchAlbums, getPlaylists };
 }
@@ -52,10 +46,12 @@ async function fetchWithAuth<T>(
           return await fetchWithAuth(callback, endSession, true);
         } else {
           console.error('Refresh token failed multiple times, ending session.');
+          toast.error('Session expired. Please log in again.');
           endSession();
         }
       } catch (refreshErr) {
         console.error(refreshErr);
+        toast.error('Failed to refresh token. Please log in again.');
         endSession();
       }
     } else {

@@ -1,0 +1,12 @@
+.spinner {
+  animation: spinAround 500ms infinite linear;
+  border: 3px solid var(--bulma-text);
+  border-radius: var(--bulma-radius-rounded);
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: '';
+  display: block;
+  height: 3em;
+  position: relative;
+  width: 3em;
+}

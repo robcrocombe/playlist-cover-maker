@@ -1,10 +1,12 @@
 import cx from 'classnames';
 import type { CSSProperties } from 'react';
-import playlistSvg from './icons/playlist.svg?raw';
+import headphonesSvg from './icons/headphones.svg?raw';
+import musicSvg from './icons/music.svg?raw';
 import searchSvg from './icons/search.svg?raw';
 
 const iconMap = {
-  playlist: playlistSvg,
+  headphones: headphonesSvg,
+  music: musicSvg,
   search: searchSvg,
 };
 

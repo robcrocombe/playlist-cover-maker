@@ -17,6 +17,9 @@
 @forward 'styles/utils';
 @forward 'styles/app';
 @forward 'styles/layout';
+@forward 'styles/toast';
+@forward 'styles/spinner';
+@forward 'styles/tabs';
 
 /* Primary #1ed760 */
 /* Primary New #1db954 */
@@ -36,6 +39,9 @@
   --bulma-danger-l: 64%;
   --bulma-scheme-main-bis-l: 14%;
   --bulma-border-l: 40%;
+  --toastify-color-error: #cc192a;
+  --toastify-color-success: var(--bulma-primary);
+  // --toastify-icon-color-error: var(--bulma-danger);
   // --bulma-text-l: 80%;
 }
 

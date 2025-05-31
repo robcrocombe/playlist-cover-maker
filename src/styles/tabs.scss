@@ -1,0 +1,29 @@
+@use 'bulma/sass/utilities/mixins';
+
+.tab-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Needed to make truncated tabs work */
+.tabs ul {
+  width: 100%;
+}
+
+/* Needed to make truncated tabs work */
+.tabs.is-fullwidth li {
+  width: 1px;
+}
+
+/* Let playlist tab take up more space */
+.tabs.is-fullwidth li:nth-child(3) {
+  width: auto;
+  max-width: 50%;
+}
+
+@media screen and (max-width: 425px) {
+  .tabs {
+    font-size: var(--bulma-size-small);
+  }
+}
