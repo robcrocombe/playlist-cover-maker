@@ -44,6 +44,7 @@ export function Auth(): JSX.Element {
 
       fetchToken(redirectCode).then(() => {
         startSession();
+        toast.success('Logged in successfully.');
       });
     }
   }, [redirectCode]);

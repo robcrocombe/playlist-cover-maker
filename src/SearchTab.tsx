@@ -6,12 +6,12 @@ import { ListItem } from './AlbumList';
 import { useAppStore } from './AppStore';
 import { useSpotifyStore } from './SpotifyStore';
 
-interface SearchPanelProps {
+interface SearchTabProps {
   input: string;
   setInput: SetState<string>;
 }
 
-export function SearchPanel({ input, setInput }: SearchPanelProps): JSX.Element {
+export function SearchTab({ input, setInput }: SearchTabProps): JSX.Element {
   const [searchTerm, setSearchTerm] = useState(input);
 
   const { albums, setAlbums } = useAppStore();

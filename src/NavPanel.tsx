@@ -1,11 +1,12 @@
 import type { SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
 import cx from 'classnames';
 import { useState } from 'react';
+import { HomeTab } from './HomeTab';
 import { Icon } from './Icon';
-import { PlaylistPanel } from './PlaylistPanel';
-import { SearchPanel } from './SearchPanel';
+import { PlaylistTab } from './PlaylistTab';
+import { SearchTab } from './SearchTab';
 
-export function SearchTabs(): JSX.Element {
+export function NavPanel(): JSX.Element {
   const [tab, setTab] = useState('playlists');
   const [playlist, setPlaylist] = useState<SimplifiedPlaylist>();
   const [input, setInput] = useState('');
@@ -47,8 +48,9 @@ export function SearchTabs(): JSX.Element {
           )}
         </ul>
       </div>
-      {tab === 'playlists' && <PlaylistPanel addPlaylistTab={addPlaylistTab} />}
-      {tab === 'search' && <SearchPanel input={input} setInput={setInput} />}
+      {tab === 'playlists' && <HomeTab addPlaylistTab={addPlaylistTab} />}
+      {tab === 'search' && <SearchTab input={input} setInput={setInput} />}
+      {tab === playlist?.name && <PlaylistTab playlist={playlist} />}
     </div>
   );
 }

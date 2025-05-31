@@ -1,7 +1,7 @@
 import { useAppStore } from './AppStore';
 import { Auth } from './Auth';
 import { DesignPanel } from './DesignPanel';
-import { SearchTabs } from './SearchTabs';
+import { NavPanel } from './NavPanel';
 import { SpotifyStoreProvider } from './SpotifyStore';
 
 export function App(): JSX.Element {
@@ -14,7 +14,7 @@ export function App(): JSX.Element {
   return (
     <SpotifyStoreProvider>
       <main className="main-container">
-        <SearchTabs />
+        <NavPanel />
         <div className="divider" />
         <DesignPanel />
       </main>
