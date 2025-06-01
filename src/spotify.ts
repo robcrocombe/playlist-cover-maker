@@ -144,19 +144,8 @@ export async function fetchPlaylistAlbums(
     }
   );
 
-  // const albums = new Set<SimplifiedAlbum>();
-  // res.data.items.forEach(item => {
-  //   if (itemIsMusic(item) && item.track.album) {
-  //     albums.add(item.track.album);
-  //   }
-  // });
-
   return res.data;
 }
-
-// function itemIsMusic(track: PlaylistedTrack): track is PlaylistedTrack<Track> {
-//   return track.track?.type === 'track';
-// }
 
 function getRedirectUrl(): string {
   return new URL(location.pathname, location.href).href;

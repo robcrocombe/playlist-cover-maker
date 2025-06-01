@@ -2,7 +2,7 @@ import { isAxiosError } from 'axios';
 import { createContext, useCallback, useContext, type PropsWithChildren } from 'react';
 import { toast } from 'react-toastify';
 import { useAppStore } from './AppStore';
-import { fetchAlbums, fetchPlaylists, refreshToken } from './spotify';
+import { fetchAlbums, fetchPlaylistAlbums, fetchPlaylists, refreshToken } from './spotify';
 
 type SpotifyStoreData = ReturnType<typeof SpotifyStore>;
 
@@ -17,7 +17,11 @@ function SpotifyStore() {
     return fetchWithAuth(token => fetchPlaylists(token, offset), endSession);
   }, []);
 
-  return { searchAlbums, getPlaylists };
+  const getPlaylistAlbums = useCallback((playlistId: string, offset: number = 0) => {
+    return fetchWithAuth(token => fetchPlaylistAlbums(token, playlistId, offset), endSession);
+  }, []);
+
+  return { searchAlbums, getPlaylists, getPlaylistAlbums };
 }
 
 async function fetchWithAuth<T>(

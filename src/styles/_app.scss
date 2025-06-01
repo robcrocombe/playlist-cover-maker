@@ -48,6 +48,18 @@
   user-select: none;
 }
 
+.clear-input-btn {
+  color: var(--bulma-grey-dark) !important;
+  pointer-events: auto !important;
+  width: calc(var(--bulma-control-height) - 6px);
+  height: calc(var(--bulma-control-height) - 6px);
+  padding-bottom: 1px;
+
+  &:hover {
+    color: var(--bulma-text) !important;
+  }
+}
+
 /* .footer {
   --bulma-footer-padding: 3rem 1.5rem;
 

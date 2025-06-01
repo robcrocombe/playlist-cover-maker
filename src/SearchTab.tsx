@@ -4,6 +4,7 @@ import cx from 'classnames';
 import { useState, type FormEvent } from 'react';
 import { ListItem } from './AlbumList';
 import { useAppStore } from './AppStore';
+import { Icon } from './Icon';
 import { useSpotifyStore } from './SpotifyStore';
 
 interface SearchTabProps {
@@ -50,12 +51,17 @@ export function SearchTab({ input, setInput }: SearchTabProps): JSX.Element {
     setAlbums(albums.filter(a => a.id !== album.id));
   }
 
+  function clearSearch() {
+    setInput('');
+    setSearchTerm('');
+  }
+
   const searchResults = data?.pages.flatMap(page => page?.albums?.items || []) || [];
 
   return (
     <div>
       <form className="field has-addons fill-width px-4" onSubmit={submit}>
-        <div className="control fill-width">
+        <div className="control fill-width has-icons-right">
           <input
             className="input fill-width"
             type="text"
@@ -63,6 +69,17 @@ export function SearchTab({ input, setInput }: SearchTabProps): JSX.Element {
             value={input}
             onChange={e => setInput(e.target.value)}
           />
+          {!!input && (
+            <span className="icon is-right flex flex-center" style={{ right: '-4px' }}>
+              <button
+                type="button"
+                title="Clear search"
+                onClick={clearSearch}
+                className="flex flex-center flex-justify clear-input-btn">
+                <Icon icon="cancel" className="is-size-5" />
+              </button>
+            </span>
+          )}
         </div>
         <div className="control">
           <button
