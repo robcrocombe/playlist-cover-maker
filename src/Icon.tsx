@@ -1,15 +1,21 @@
 import cx from 'classnames';
 import type { CSSProperties } from 'react';
 import cancelSvg from './icons/cancel.svg?raw';
+import downloadSvg from './icons/download.svg?raw';
 import headphonesSvg from './icons/headphones.svg?raw';
+import logoutSvg from './icons/logout.svg?raw';
 import musicSvg from './icons/music.svg?raw';
 import searchSvg from './icons/search.svg?raw';
+import uploadSvg from './icons/upload.svg?raw';
 
 const iconMap = {
   cancel: cancelSvg,
+  download: downloadSvg,
   headphones: headphonesSvg,
   music: musicSvg,
   search: searchSvg,
+  upload: uploadSvg,
+  logout: logoutSvg,
 };
 
 interface IconProps {

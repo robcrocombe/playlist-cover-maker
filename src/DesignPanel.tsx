@@ -2,9 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlbumList } from './AlbumList';
 import { useAppStore } from './AppStore';
+import { Icon } from './Icon';
+import { UploadModal } from './UploadModal';
+import { getImageBlob } from './utils';
 
 export function DesignPanel(): JSX.Element {
-  const { albums, setAlbums, endSession } = useAppStore();
+  const { albums, setAlbums } = useAppStore();
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const dlCount = useRef(1);
@@ -76,27 +80,15 @@ export function DesignPanel(): JSX.Element {
       link.download = `playlist-cover-${dlCount.current}.jpg`;
       dlCount.current += 1;
 
-      canvas.toBlob(
-        blob => {
-          if (blob) {
-            link.href = URL.createObjectURL(blob);
-            link.click();
-            URL.revokeObjectURL(link.href);
-          } else {
-            toast.error('Failed to create image from canvas');
-          }
-          setIsLoading(false);
-        },
-        'image/jpeg',
-        1
-      );
-
-      // link.href = canvas.toDataURL('image/jpeg', 1);
-      // link.click();
-      // link.remove();
+      const blob = await getImageBlob(canvas, 1);
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error('Error downloading cover:', err);
       toast.error('Failed to download cover');
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -109,7 +101,20 @@ export function DesignPanel(): JSX.Element {
           className="button is-primary is-outlined"
           disabled={albums.length < 4 || isLoading}
           onClick={downloadCover}>
-          Download Playlist Cover
+          <span className="icon">
+            <Icon icon="download" />
+          </span>
+          <span>Download cover</span>
+        </button>
+        <button
+          type="button"
+          className="button is-primary is-outlined"
+          disabled={albums.length < 4 || isLoading}
+          onClick={() => setUploadDialogOpen(true)}>
+          <span className="icon">
+            <Icon icon="upload" />
+          </span>
+          <span>Set cover</span>
         </button>
         <button
           type="button"
@@ -118,9 +123,6 @@ export function DesignPanel(): JSX.Element {
           onClick={() => setAlbums([])}>
           Reset
         </button>
-        <button type="button" className="button sign-out" onClick={endSession}>
-          Sign out
-        </button>
       </div>
       <AlbumList />
       {albums.length > 1 && (
@@ -128,6 +130,7 @@ export function DesignPanel(): JSX.Element {
           Drag and drop with <span className="drag-hint">⋮</span> to reorder.
         </p>
       )}
+      <UploadModal open={uploadDialogOpen} setOpen={setUploadDialogOpen} canvasRef={canvasRef} />
     </div>
   );
 }

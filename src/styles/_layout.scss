@@ -42,7 +42,7 @@ body {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1px auto;
     gap: 16px;
-    padding: 16px 8px;
+    padding: 16px 8px 0 8px;
   }
 
   .divider {
@@ -67,6 +67,10 @@ body {
     width: 80vmin;
     height: auto;
   }
+
+  .footer-notes {
+    justify-content: center;
+  }
 }
 
 @include mixins.tablet {
@@ -74,7 +78,7 @@ body {
     grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
     grid-template-rows: auto;
     gap: 8px;
-    padding: 16px;
+    padding: 16px 16px 0 16px;
   }
 
   .results-list {
@@ -95,7 +99,7 @@ body {
 @include mixins.desktop {
   .main-container {
     gap: 24px;
-    padding: 24px;
+    padding: 24px 24px 0 24px;
   }
 
   .divider {

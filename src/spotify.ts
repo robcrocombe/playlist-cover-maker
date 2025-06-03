@@ -7,6 +7,7 @@ import {
 } from '@spotify/web-api-ts-sdk';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { blobToBase64 } from './utils';
 
 export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
@@ -145,6 +146,23 @@ export async function fetchPlaylistAlbums(
   );
 
   return res.data;
+}
+
+export async function putPlaylistCover(
+  token: string,
+  playlistId: string,
+  blob: Blob
+): Promise<void> {
+  // Convert Blob to base64 image
+  const base64 = await blobToBase64(blob);
+  const image = base64.replace(/^data:image\/jpeg;base64,/, '');
+
+  return axios.put(`https://api.spotify.com/v1/playlists/${playlistId}/images`, image, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'image/jpeg',
+    },
+  });
 }
 
 function getRedirectUrl(): string {

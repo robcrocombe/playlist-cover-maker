@@ -1,8 +1,18 @@
 @use 'bulma/sass/utilities/mixins';
 
-@include mixins.desktop {
-  .sign-out {
-    margin-left: auto;
+.sign-out:not(:hover):not(:focus-visible):not(:active) {
+  opacity: 0.85;
+}
+
+.site-link {
+  color: var(--bulma-text);
+  font-size: var(--bulma-size-small);
+
+  &:hover,
+  &:active,
+  &:focus-visible {
+    color: var(--bulma-text-strong);
+    text-decoration: underline;
   }
 }
 
@@ -48,6 +58,30 @@
   user-select: none;
 }
 
+.modal-card {
+  margin-bottom: 10vh;
+}
+
+.modal-card-head,
+.modal-card-body {
+  background: var(--bulma-modal-card-foot-background-color);
+  box-shadow: none;
+}
+
+.modal-cancel-btn {
+  width: calc(var(--bulma-control-height) - 10px);
+  height: calc(var(--bulma-control-height) - 10px);
+  padding: 2px 0 0 2px;
+  border-radius: 8px;
+  transition-duration: 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--bulma-modal-card-body-background-color);
+    color: var(--bulma-link-text);
+  }
+}
+
 .clear-input-btn {
   color: var(--bulma-grey-dark) !important;
   pointer-events: auto !important;
@@ -59,6 +93,15 @@
     color: var(--bulma-text) !important;
   }
 }
+
+/* .button.is-text {
+  --bulma-button-text-hover-background-color: var(--bulma-background-hover);
+  text-decoration: none;
+
+  &:active {
+    background-color: #383f4c;
+  }
+} */
 
 /* .footer {
   --bulma-footer-padding: 3rem 1.5rem;

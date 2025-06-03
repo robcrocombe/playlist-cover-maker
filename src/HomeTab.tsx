@@ -1,6 +1,7 @@
 import { type SimplifiedPlaylist } from '@spotify/web-api-ts-sdk';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cx from 'classnames';
+import { useMemo } from 'react';
 import { ListItem } from './AlbumList';
 import { useSpotifyStore } from './SpotifyStore';
 
@@ -23,11 +24,16 @@ export function HomeTab({ addPlaylistTab }: HomeTabProps): JSX.Element {
     },
   });
 
-  const playlists = data?.pages.flatMap(page => page?.items || []) || [];
+  const playlists = useMemo(() => {
+    if (!data?.pages) {
+      return [];
+    }
+    return data.pages.flatMap(page => page?.items || []);
+  }, [data?.pages]);
 
   return (
     <div className="results-list">
-      {isFetching && (
+      {isFetching && !isFetchingNextPage && (
         <div className="flex flex-column flex-center my-6 py-6">
           <div className="spinner" />
         </div>

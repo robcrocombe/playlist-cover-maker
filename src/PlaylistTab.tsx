@@ -8,6 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import cx from 'classnames';
 import { useMemo } from 'react';
 import { ListItem } from './AlbumList';
+import { useAppStore } from './AppStore';
 import { useSpotifyStore } from './SpotifyStore';
 
 interface PlaylistTabProps {
@@ -16,6 +17,7 @@ interface PlaylistTabProps {
 
 export function PlaylistTab({ playlist }: PlaylistTabProps): JSX.Element {
   const { getPlaylistAlbums } = useSpotifyStore();
+  const { albums, setAlbums } = useAppStore();
 
   const { data, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ['playlistAlbums', playlist.id],
@@ -29,7 +31,7 @@ export function PlaylistTab({ playlist }: PlaylistTabProps): JSX.Element {
     },
   });
 
-  const albums = useMemo(() => {
+  const trackAlbums = useMemo(() => {
     if (!data?.pages) {
       return [];
     }
@@ -51,6 +53,18 @@ export function PlaylistTab({ playlist }: PlaylistTabProps): JSX.Element {
     return Object.values(albumSet);
   }, [data?.pages]);
 
+  function addAlbum(album: SimplifiedAlbum) {
+    if (albums.length >= 4 || albums.some(a => a.id === album.id)) {
+      return;
+    }
+
+    setAlbums([...albums, album]);
+  }
+
+  function removeAlbum(album: SimplifiedAlbum) {
+    setAlbums(albums.filter(a => a.id !== album.id));
+  }
+
   return (
     <div className="results-list">
       {isFetching && (
@@ -59,16 +73,32 @@ export function PlaylistTab({ playlist }: PlaylistTabProps): JSX.Element {
         </div>
       )}
       <ul className="list has-hoverable-list-items has-overflow-ellipsis has-visible-pointer-controls">
-        {albums.map(result => {
+        {trackAlbums.map(result => {
+          const isSelected = albums.some(a => a.id === result.id);
+          const disabled = albums.length >= 4;
+
           return (
             <ListItem key={result.id} item={result}>
-              <button type="button" className="button" onClick={() => result}>
-                Add album
-              </button>
+              {isSelected && (
+                <button type="button" className="button" onClick={() => removeAlbum(result)}>
+                  Remove
+                </button>
+              )}
+              {!isSelected && (
+                <button
+                  type="button"
+                  className={cx('button', {
+                    'is-outlined is-link': !disabled,
+                  })}
+                  disabled={disabled}
+                  onClick={() => addAlbum(result)}>
+                  Add album
+                </button>
+              )}
             </ListItem>
           );
         })}
-        {!albums.length && !isFetching && (
+        {!trackAlbums.length && !isFetching && (
           <li className="flex flex-column flex-center my-6 pt-5">
             <span className="subtitle is-5">No albums found.</span>
           </li>

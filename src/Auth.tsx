@@ -9,22 +9,22 @@ export function Auth(): JSX.Element {
   const redirectCode = urlParams.get('code');
   const redirectState = urlParams.get('state');
 
-  const [loading, setLoading] = useState(!!redirectCode && !!redirectState);
+  const [isLoading, setIsLoading] = useState(!!redirectCode && !!redirectState);
 
   const { startSession } = useAppStore();
 
   async function submit() {
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const authUrl = await getAuthUrl();
 
-      setLoading(false);
+      setIsLoading(false);
       location.href = authUrl;
     } catch (err) {
       console.log(err);
       toast.error('Failed to get authorization URL');
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -35,7 +35,7 @@ export function Auth(): JSX.Element {
       if (localState !== redirectState) {
         console.error('State mismatch');
         toast.error('State mismatch. Please try again.');
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
 
@@ -54,9 +54,9 @@ export function Auth(): JSX.Element {
       <h1 className="title is-3">Playlist Cover Maker</h1>
       <button
         type="button"
-        className={cx('button is-primary mt-2', { 'is-loading': loading })}
+        className={cx('button is-primary mt-2', { 'is-loading': isLoading })}
         onClick={submit}
-        disabled={loading}>
+        disabled={isLoading}>
         Login with Spotify
       </button>
     </div>
