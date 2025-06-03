@@ -110,7 +110,7 @@ export async function fetchAlbums(
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    params: { q: query, type: 'album', offset },
+    params: { q: query, type: 'album', offset, limit: 20 },
   });
 
   return res.data;
@@ -121,7 +121,7 @@ export async function fetchPlaylists(
   offset: number
 ): Promise<Page<SimplifiedPlaylist> | undefined> {
   const res = await axios.get<Page<SimplifiedPlaylist>>('https://api.spotify.com/v1/me/playlists', {
-    params: { offset },
+    params: { offset, limit: 50 },
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -130,7 +130,7 @@ export async function fetchPlaylists(
   return res.data;
 }
 
-export async function fetchPlaylistAlbums(
+export async function fetchPlaylistTracks(
   token: string,
   playlistId: string,
   offset: number

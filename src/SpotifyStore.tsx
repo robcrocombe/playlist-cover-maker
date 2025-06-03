@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 import { useAppStore } from './AppStore';
 import {
   fetchAlbums,
-  fetchPlaylistAlbums,
   fetchPlaylists,
+  fetchPlaylistTracks,
   putPlaylistCover,
   refreshToken,
 } from './spotify';
@@ -23,15 +23,15 @@ function SpotifyStore() {
     return fetchWithAuth(token => fetchPlaylists(token, offset), endSession);
   }, []);
 
-  const getPlaylistAlbums = useCallback((playlistId: string, offset: number = 0) => {
-    return fetchWithAuth(token => fetchPlaylistAlbums(token, playlistId, offset), endSession);
+  const getPlaylistTracks = useCallback((playlistId: string, offset: number = 0) => {
+    return fetchWithAuth(token => fetchPlaylistTracks(token, playlistId, offset), endSession);
   }, []);
 
   const uploadPlaylistCover = useCallback((playlistId: string, blob: Blob) => {
     return fetchWithAuth(token => putPlaylistCover(token, playlistId, blob), endSession);
   }, []);
 
-  return { searchAlbums, getPlaylists, getPlaylistAlbums, uploadPlaylistCover };
+  return { searchAlbums, getPlaylists, getPlaylistTracks, uploadPlaylistCover };
 }
 
 async function fetchWithAuth<T>(

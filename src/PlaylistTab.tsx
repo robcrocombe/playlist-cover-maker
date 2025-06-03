@@ -16,12 +16,12 @@ interface PlaylistTabProps {
 }
 
 export function PlaylistTab({ playlist }: PlaylistTabProps): JSX.Element {
-  const { getPlaylistAlbums } = useSpotifyStore();
+  const { getPlaylistTracks } = useSpotifyStore();
   const { albums, setAlbums } = useAppStore();
 
   const { data, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
-    queryKey: ['playlistAlbums', playlist.id],
-    queryFn: ({ pageParam }) => getPlaylistAlbums(playlist.id, pageParam),
+    queryKey: ['playlistTracks', playlist.id],
+    queryFn: ({ pageParam }) => getPlaylistTracks(playlist.id, pageParam),
     initialPageParam: 0,
     getNextPageParam: lastPage => {
       if (lastPage) {
