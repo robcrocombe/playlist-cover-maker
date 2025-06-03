@@ -9,10 +9,14 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { blobToBase64 } from './utils';
 
-export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
-
 // Authorization code with PKCE flow
 export async function getAuthUrl(): Promise<string> {
+  const clientId = localStorage.getItem('clientId');
+
+  if (!clientId) {
+    throw new Error('Client ID not set');
+  }
+
   const codeVerifier = generateRandomId(128);
   const codeChallenge = await getCodeChallenge(codeVerifier);
   const state = generateRandomId(16);
@@ -30,7 +34,7 @@ export async function getAuthUrl(): Promise<string> {
 
   const params = {
     response_type: 'code',
-    client_id: CLIENT_ID,
+    client_id: clientId,
     scope,
     state,
     code_challenge_method: 'S256',
@@ -43,18 +47,21 @@ export async function getAuthUrl(): Promise<string> {
 }
 
 export async function fetchToken(code: string): Promise<void> {
+  const clientId = localStorage.getItem('clientId');
   const codeVerifier = localStorage.getItem('codeVerifier');
 
+  if (!clientId) {
+    throw new Error('Client ID not set');
+  }
+
   if (!codeVerifier) {
-    console.error('No code verifier found');
-    toast.error('No code verifier found. Please try again.');
-    return;
+    throw new Error('No code verifier found');
   }
 
   const res = await axios.post<AccessToken>(
     'https://accounts.spotify.com/api/token',
     {
-      client_id: CLIENT_ID,
+      client_id: clientId,
       grant_type: 'authorization_code',
       redirect_uri: getRedirectUrl(),
       code_verifier: codeVerifier,
@@ -74,18 +81,21 @@ export async function fetchToken(code: string): Promise<void> {
 }
 
 export async function refreshToken(): Promise<void> {
+  const clientId = localStorage.getItem('clientId');
   const refreshToken = localStorage.getItem('refreshToken');
 
+  if (!clientId) {
+    throw new Error('Client ID not set');
+  }
+
   if (!refreshToken) {
-    console.error('No refresh token found');
-    toast.error('No refresh token found. Please login again.');
-    return;
+    throw new Error('No refresh token found');
   }
 
   const res = await axios.post<AccessToken>(
     'https://accounts.spotify.com/api/token',
     {
-      client_id: CLIENT_ID,
+      client_id: clientId,
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
     },

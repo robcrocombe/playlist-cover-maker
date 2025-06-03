@@ -1,4 +1,5 @@
 @use 'bulma/sass/utilities/mixins';
+@use 'variables' as *;
 
 /* html,
 body {
@@ -28,16 +29,6 @@ body {
 }
 
 @include mixins.mobile {
-  .auth-container {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    & .title {
-      text-align: center;
-    }
-  }
-
   .main-container {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1px auto;
@@ -74,6 +65,10 @@ body {
 }
 
 @include mixins.tablet {
+  .auth-container {
+    padding: 0 $space-1h;
+  }
+
   .main-container {
     grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
     grid-template-rows: auto;

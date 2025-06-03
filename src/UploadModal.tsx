@@ -68,7 +68,7 @@ export function UploadModal({ open, setOpen, canvasRef }: UploadModalProps): JSX
 
       await uploadPlaylistCover(selectedPlaylist.id, imageBlob);
 
-      toast.success('Playlist cover uploaded successfully!');
+      toast.success('Playlist cover uploaded successfully.');
       setOpen(false);
     } catch (error) {
       console.error('Error uploading cover:', error);
