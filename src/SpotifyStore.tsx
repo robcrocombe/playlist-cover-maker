@@ -27,8 +27,8 @@ function SpotifyStore() {
     return fetchWithAuth(token => fetchPlaylistTracks(token, playlistId, offset), endSession);
   }, []);
 
-  const uploadPlaylistCover = useCallback((playlistId: string, blob: Blob) => {
-    return fetchWithAuth(token => putPlaylistCover(token, playlistId, blob), endSession);
+  const uploadPlaylistCover = useCallback((playlistId: string, blob: Blob, signal: AbortSignal) => {
+    return fetchWithAuth(token => putPlaylistCover(token, playlistId, blob, signal), endSession);
   }, []);
 
   return { searchAlbums, getPlaylists, getPlaylistTracks, uploadPlaylistCover };

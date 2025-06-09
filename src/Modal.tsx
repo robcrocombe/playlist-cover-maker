@@ -5,14 +5,14 @@ import { Icon } from './Icon';
 interface ModalProps {
   title: string;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
   actions: JSX.Element[];
 }
 
 export function Modal({
   title,
   open,
-  setOpen,
+  onClose,
   actions,
   children,
 }: PropsWithChildren<ModalProps>): JSX.Element {
@@ -25,7 +25,7 @@ export function Modal({
           <button
             className="modal-cancel-btn delete is-size-5"
             aria-label="close"
-            onClick={() => setOpen(false)}>
+            onClick={onClose}>
             <Icon icon="cancel" />
           </button>
         </header>

@@ -50,10 +50,10 @@ export function ListItem({ item, children }: PropsWithChildren<ListItemProps>): 
         {item.images?.[0]?.url ? (
           <figure className="image is-64x64">
             <img
-              src={item.images?.[0]?.url}
+              src={item.images[0].url}
               alt={item.name}
-              width={64}
-              height={64}
+              width={item.images[0].width || 64}
+              height={item.images[0].height || 64}
               loading="lazy"
             />
           </figure>

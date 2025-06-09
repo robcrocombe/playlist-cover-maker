@@ -161,7 +161,8 @@ export async function fetchPlaylistTracks(
 export async function putPlaylistCover(
   token: string,
   playlistId: string,
-  blob: Blob
+  blob: Blob,
+  abortSignal: AbortSignal
 ): Promise<void> {
   // Convert Blob to base64 image
   const base64 = await blobToBase64(blob);
@@ -172,6 +173,7 @@ export async function putPlaylistCover(
       Authorization: `Bearer ${token}`,
       'Content-Type': 'image/jpeg',
     },
+    signal: abortSignal,
   });
 }
 

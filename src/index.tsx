@@ -1,19 +1,12 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
 import { cssTransition, ToastContainer } from 'react-toastify';
 import { App } from './App';
 import { AppStoreProvider } from './AppStore';
+import { queryClient } from './query-client';
 
 const container = document.getElementById('app')!;
 const root = createRoot(container);
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
 
 root.render(
   <QueryClientProvider client={queryClient}>
