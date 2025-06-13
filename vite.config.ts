@@ -5,7 +5,7 @@ import checker from 'vite-plugin-checker';
 import csp from 'vite-plugin-csp-guard';
 import mkcert from 'vite-plugin-mkcert';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
     port: 9000,
     strictPort: true,
@@ -29,7 +29,11 @@ export default defineConfig({
       policy: {
         'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         'img-src': ["'self'", 'blob:', 'data:', 'https:'],
-        'connect-src': ["'self'", 'https://accounts.spotify.com', 'https://api.spotify.com'],
+        'connect-src': [
+          mode === 'development' ? "'self'" : '',
+          'https://accounts.spotify.com',
+          'https://api.spotify.com',
+        ].filter(Boolean),
         'font-src': ["'self'", 'https://fonts.gstatic.com'],
       },
       build: {
@@ -43,7 +47,7 @@ export default defineConfig({
       plugins: [autoprefixer],
     },
   },
-});
+}));
 
 function clearTerminal(): Plugin {
   return {
